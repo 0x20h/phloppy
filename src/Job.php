@@ -10,6 +10,15 @@ class Job {
      */
     private $id = null;
 
+
+    /**
+     * Queue name this job was fetched from.
+     *
+     * @var string
+     */
+    private $queue;
+
+
     /**
      * Job body.
      *
@@ -19,7 +28,7 @@ class Job {
 
 
     /**
-     * Delay time (before putting the job into the queue).
+     * Delay time (before putting the job into the queue, in seconds).
      *
      * @var int
      */
@@ -27,7 +36,7 @@ class Job {
 
 
     /**
-     * Retry time.
+     * Retry time (seconds).
      *
      * How much time should elapse, since the last time the job was queued, and without an acknowledge about the job
      * delivery, before the job is re-queued again for delivery.
@@ -38,18 +47,18 @@ class Job {
 
 
     /**
-     * The expire time.
+     * The expire time (in seconds).
      *
      * How much time should elapse for the job to be deleted regardless of the fact it was successfully delivered,
      * i.e. acknowledged, or not.
      *
      * @var int
      */
-    private $ttl = 120;
+    private $ttl = 3600;
 
 
-
-    public function __construct($body) {
+    public function __construct($body)
+    {
         $this->body = $body;
     }
 
@@ -128,12 +137,25 @@ class Job {
         $this->ttl = $ttl;
     }
 
+    /**
+     * @return string
+     */
+    public function getQueue()
+    {
+        return $this->queue;
+    }
 
-    public static function create(array $args) {
+
+    public static function create(array $args)
+    {
         $job = new Job($args['body']);
 
         if (isset($args['id'])) {
             $job->id = $args['id'];
+        }
+
+        if (isset($args['queue'])) {
+            $job->queue = $args['queue'];
         }
 
         // @TODO add other variables from GETJOB/SHOW
