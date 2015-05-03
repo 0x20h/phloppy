@@ -42,37 +42,36 @@ class Resp {
         list($type, $result) = [$rsp[0], substr($rsp, 1, strlen($rsp))];
 
         switch($type) {
-         case '-':
-              throw new CommandException($result);
+         case '-': // ERRORS
+             // @TODO take error prefix into account
+             throw new CommandException($result);
 
-         case '+':
-              return $result;
+         case '+': // SIMPLE STRINGS
+             return $result;
 
-         case ':':
-              return (int) $result;
+         case ':': // INTEGERS
+             return (int) $result;
 
-         case '$':
-            $result = (int) $result;
-            if ($result == -1) {
-               return null;
-            }
+         case '$': // BULK STRINGS
+             $result = (int) $result;
+             if ($result == -1) {
+                 return null;
+             }
 
-            return trim($stream->readBytes($result + 2));
+             return trim($stream->readBytes($result + 2));
 
-         case '*':
-            $cnt = (int) $result;
-            $out = [];
+         case '*': // ARRAYS
+             $cnt = (int) $result;
+             $out = [];
 
-            for ($i = 0; $i < $cnt; $i++) {
-               $out[] = static::deserialize($stream);
-            }
+             for ($i = 0; $i < $cnt; $i++) {
+                 $out[] = static::deserialize($stream);
+             }
 
-            return $out;
+             return $out;
 
          default:
-            throw new \RuntimeException('unhandled protocol response: ' . $rsp);
+             throw new \RuntimeException('unhandled protocol response: ' . $rsp);
         }
-
-        throw new \RuntimeException('unable to read response from server');
     }
 }
