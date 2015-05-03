@@ -61,19 +61,19 @@ class Consumer extends Client {
      * Acknowledge a job execution.
      *
      * @param Job $job
-     * @param bool $fastAck
      *
-     * @return void
+     * @return int Number of Jobs acknowledged.
      */
-    public function ack(Job $job, $fastAck = false)
+    public function ack(Job $job)
     {
         assert($job->getId() != null);
+        return $this->send(['ACKJOB', $job->getId()]);
+    }
 
-        $ack = $this->send([
-            'ACKJOB',
-            $job->getId()
-        ]);
 
-        return $ack;
+    public function fastAck(Job $job)
+    {
+        assert($job->getId() != null);
+        return $this->send(['FASTACK', $job->getId()]);
     }
 }

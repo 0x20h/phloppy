@@ -8,21 +8,21 @@ use Monolog\Logger;
 class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @var Pool
+     * @var Stream
      */
-    private $link;
+    private $stream;
 
     protected function setUp()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $this->link = new Stream\Pool($servers);
+        $this->stream = new Stream\Pool($servers);
     }
 
 
     public function testGetJob()
     {
         $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $client= new Consumer($this->link);
+        $client= new Consumer($this->stream);
         $job = $client->getJob($queue, 1);
         $this->assertNull($job);
     }
@@ -30,7 +30,7 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
     public function testAckUnknownJob()
     {
         $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $client= new Consumer($this->link);
+        $client= new Consumer($this->stream);
         // ack an unknown job
         $job = Job::create(['id' => 'DI37a52bb8dc160e3953111b6a9a7b10f56209320d0002SQ', 'body' => 'foo']);
         $this->assertEquals(0, $client->ack($job));
@@ -41,8 +41,8 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
     {
         $queue = 'test-'.substr(sha1(mt_rand()), 6);
 
-        $consumer= new Consumer($this->link);
-        $producer= new Producer($this->link);
+        $consumer= new Consumer($this->stream);
+        $producer= new Producer($this->stream);
         $job = $producer->addJob($queue, Job::create(['body' => '42']));
         $consumer->getJob($queue);
         $this->assertEquals(1, $consumer->ack($job));
@@ -53,10 +53,10 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
     public function testFastAck()
     {
         $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $consumer= new Consumer($this->link);
-        $producer= new Producer($this->link);
+        $consumer= new Consumer($this->stream);
+        $producer= new Producer($this->stream);
         $job = $producer->addJob($queue, Job::create(['body' => '42']));
-        $this->assertEquals(1, $consumer->ack($job,1));
-        $this->assertEquals(0, $consumer->ack($job));
+        $this->assertEquals(1, $consumer->fastAck($job));
+        $this->assertEquals(0, $consumer->fastAck($job));
     }
 }

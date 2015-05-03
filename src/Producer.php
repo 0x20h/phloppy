@@ -49,5 +49,35 @@ class Producer extends Client {
         return $job;
     }
 
+    /**
+     * @return int
+     */
+    public function getReplicationTimeout()
+    {
+        return $this->replication_timeout;
+    }
 
+    /**
+     * @param int $replication_timeout
+     */
+    public function setReplicationTimeout($replication_timeout)
+    {
+        $this->replication_timeout = $replication_timeout;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReplicationFactor()
+    {
+        return $this->replication_factor;
+    }
+
+    /**
+     * @param int $replication_factor
+     */
+    public function setReplicationFactor($replication_factor)
+    {
+        $this->replication_factor = $replication_factor;
+    }
 }

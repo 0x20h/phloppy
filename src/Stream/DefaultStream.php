@@ -49,7 +49,7 @@ class DefaultStream implements Stream {
         $stream = @stream_socket_client($this->server, $errno, $errstr, $timeout);
 
         if (!$stream) {
-            throw new ConnectException('Unable to connect to any servers '. $this->server .': '. $errstr, $errno);
+            throw new ConnectException('Unable to connect to server '. $this->server .'. '. $errstr, $errno);
         }
 
         $this->log->info('connected to ' . $this->server);
@@ -101,6 +101,8 @@ class DefaultStream implements Stream {
     {
         $bytes = fwrite($this->stream, $msg);
         $this->log->debug("write()", ['written' => $bytes, 'len' => $len, 'msg' => $msg]);
+        assert($bytes == $len ? $len : strlen($msg));
+
         return $this;
     }
 }
