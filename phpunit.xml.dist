@@ -20,6 +20,6 @@
 		  </testsuite>
 	 </testsuites>
 	 <php>
-		 <env name="DISQUE_SERVERS" value="tcp://127.0.0.1:8888,tcp://127.0.0.1:8890" />
+		 <env name="DISQUE_SERVERS" value="" />
 	 </php>
 </phpunit>
