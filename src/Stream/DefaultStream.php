@@ -61,7 +61,8 @@ class DefaultStream implements Stream {
     public function close()
     {
         stream_socket_shutdown($this->stream, STREAM_SHUT_RDWR);
-        return $this->connect($this->server);
+        $this->stream = null;
+        return true;
     }
 
 
@@ -104,5 +105,15 @@ class DefaultStream implements Stream {
         assert($bytes == $len ? $len : strlen($msg));
 
         return $this;
+    }
+
+    /**
+     * Check if the stream is connected.
+     *
+     * @return boolean True if the stream is connected.
+     */
+    public function isConnected()
+    {
+        return is_resource($this->stream);
     }
 }

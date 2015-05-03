@@ -68,7 +68,7 @@ class Pool implements Stream {
     public function reconnect()
     {
         $this->close();
-        $this->connect();
+        $this->connected = $this->connect();
         return true;
     }
 
@@ -96,7 +96,7 @@ class Pool implements Stream {
           array_splice($nodes, $idx, 1);
         }
 
-        throw new ConnectException('unable to connect to any of [' . implode(',', $nodes) .']');
+        throw new ConnectException('unable to connect to any of [' . implode(',', $this->servers) .']');
     }
 
 
@@ -139,5 +139,15 @@ class Pool implements Stream {
     public function close()
     {
         return $this->connected->close();
+    }
+
+    /**
+     * Check if the stream is connected.
+     *
+     * @return boolean True if the stream is connected.
+     */
+    public function isConnected()
+    {
+        return $this->connected->isConnected();
     }
 }

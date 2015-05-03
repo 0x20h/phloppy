@@ -12,6 +12,13 @@ interface Stream {
     public function close();
 
     /**
+     * Check if the stream is connected.
+     *
+     * @return boolean True if the stream is connected.
+     */
+    public function isConnected();
+
+    /**
      * Read a line from the stream
      *
      * @return string

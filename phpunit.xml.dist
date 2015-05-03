@@ -19,6 +19,11 @@
 				<directory>tests</directory>
 		  </testsuite>
 	 </testsuites>
+	<filter>
+		<blacklist>
+			<directory>vendor/</directory>
+		</blacklist>
+	</filter>
 	 <php>
 		 <env name="DISQUE_SERVERS" value="" />
 	 </php>

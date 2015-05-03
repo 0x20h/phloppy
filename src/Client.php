@@ -54,12 +54,7 @@ class Client {
      */
     public function ping()
     {
-        try {
-            return $this->send(['PING']) === 'PONG';
-        } catch(\Exception $e) {
-            $this->log->emergency($e->getMessage());
-            return false;
-        }
+        return $this->send(['PING']) === 'PONG';
     }
 
 

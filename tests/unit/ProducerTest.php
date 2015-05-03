@@ -30,4 +30,22 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
         $p = new Producer($mock);
         $p->addJob('test', Job::create(['body' => 42]));
     }
+
+    public function testReplicationTimeout()
+    {
+        $mock = $this->getMock('\Disque\Stream');
+        $p = new Producer($mock);
+        $rand = rand();
+        $p->setReplicationTimeout($rand);
+        $this->assertEquals($rand, $p->getReplicationTimeout());
+    }
+
+    public function testReplicationFactor()
+    {
+        $mock = $this->getMock('\Disque\Stream');
+        $p = new Producer($mock);
+        $rand = rand();
+        $p->setReplicationFactor($rand);
+        $this->assertEquals($rand, $p->getReplicationFactor());
+    }
 }

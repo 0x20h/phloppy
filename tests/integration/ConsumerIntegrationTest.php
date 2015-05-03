@@ -14,6 +14,10 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp()
     {
+        if (empty($_ENV['DISQUE_SERVERS'])) {
+            return $this->markTestSkipped('no disque servers configured');
+        }
+
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
         $this->stream = new Stream\Pool($servers);
     }
