@@ -25,6 +25,6 @@
 		</blacklist>
 	</filter>
 	 <php>
-		 <env name="DISQUE_SERVERS" value="" />
+         <env name="DISQUE_SERVERS" value="tcp://127.0.0.1:7711" />
 	 </php>
 </phpunit>
