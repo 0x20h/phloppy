@@ -1,10 +1,10 @@
 # Phloppy
-[![Latest Version](https://img.shields.io/github/release/0x20h/disque-php.svg?style=flat-square)](https://github.com/0x20h/disque-php/releases)
+[![Latest Version](https://img.shields.io/github/release/0x20h/phloppy.svg?style=flat-square)](https://github.com/0x20h/phloppy/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/0x20h/disque-php/master.svg?style=flat-square)](https://travis-ci.org/0x20h/disque-php)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/0x20h/disque-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/0x20h/disque-php/code-structure)
-[![Quality Score](https://img.shields.io/scrutinizer/g/0x20h/disque-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/0x20h/disque-php)
-[![Total Downloads](https://img.shields.io/packagist/dt/0x20h/disque-php.svg?style=flat-square)](https://packagist.org/packages/0x20h/disque-php)
+[![Build Status](https://img.shields.io/travis/0x20h/phloppy/master.svg?style=flat-square)](https://travis-ci.org/0x20h/phloppy)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/0x20h/phloppy.svg?style=flat-square)](https://scrutinizer-ci.com/g/0x20h/phloppy/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/0x20h/phloppy.svg?style=flat-square)](https://scrutinizer-ci.com/g/0x20h/phloppy)
+[![Total Downloads](https://img.shields.io/packagist/dt/0x20h/phloppy.svg?style=flat-square)](https://packagist.org/packages/0x20h/phloppy)
 
 A [Disque](https://github.com/antirez/disque) client for PHP 5.5.
 
