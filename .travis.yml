@@ -8,7 +8,7 @@ php:
 before_script:
   - curl --version
   - composer self-update
-  - composer install --no-interaction --prefer-source --dev
+  - composer install --no-interaction --prefer-source
   - git clone https://github.com/antirez/disque.git
   - cd disque
   - make
