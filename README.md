@@ -1,23 +1,63 @@
-# Disque-php
+# Phloppy
+[![Latest Version](https://img.shields.io/github/release/0x20h/disque-php.svg?style=flat-square)](https://github.com/0x20h/disque-php/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Build Status](https://img.shields.io/travis/0x20h/disque-php/master.svg?style=flat-square)](https://travis-ci.org/0x20h/disque-php)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/0x20h/disque-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/0x20h/disque-php/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/0x20h/disque-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/0x20h/disque-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/0x20h/disque-php.svg?style=flat-square)](https://packagist.org/packages/0x20h/disque-php)
 
 A [Disque](https://github.com/antirez/disque) client for PHP 5.5.
 
+## Installation
+
+...
 ## Usage
 
-Producer:
+### Producer
+
 ``` php
 $logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
-$pool = new Disque\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-$producer = new Disque\Producer($pool, $logger);
-$job = $producer->addJob('test', Disque\Job::create(['body' => 42]));
+$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+$producer = new Phloppy\Producer($pool, $logger);
+$job = $producer->addJob('test', Phloppy\Job::create(['body' => 42]));
 ```
 
-Consumer:
+Commands:
+
+- getJob(queues)
+- getJobs(queues, numberOfJobs)
+- ack(job)
+- fastAck(job)
+
+
+### Consumer
+
 ``` php
 $logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
-$pool = new Disque\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-$consumer = new Disque\Consumer($pool, $logger);
+$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+$consumer = new Phloppy\Consumer($pool, $logger);
 $job = $consumer->getJob('test');
 // do some work
 $consumer->ack($job);
 ```
+
+Commands:
+
+- getJob(queues)
+- getJobs(queues, numberOfJobs)
+- ack(job)
+- fastAck(job)
+
+
+### Generic commands
+
+``` php
+$logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
+$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+$consumer = new Phloppy\Client($pool, $logger);
+$nodes = $consumer->hello();
+```
+
+# License
+
+The MIT License (MIT).

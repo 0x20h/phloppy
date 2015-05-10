@@ -46,9 +46,12 @@ class DefaultStream implements Stream {
     private function connect()
     {
         $timeout = 3;
+        $errstr = '';
+        $errno = 0;
         $stream = @stream_socket_client($this->server, $errno, $errstr, $timeout);
 
         if (!$stream) {
+            $this->log->warning('unable to connect to '. $this->server. ': '. $errstr);
             throw new ConnectException('Unable to connect to server '. $this->server .'. '. $errstr, $errno);
         }
 
