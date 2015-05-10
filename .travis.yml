@@ -13,6 +13,7 @@ before_script:
   - cd disque
   - make
   - src/disque-server &
+  - cd ..
 
 matrix:
   allow_failures:
