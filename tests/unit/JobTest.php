@@ -1,6 +1,6 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
 class JobTest extends \PHPUnit_Framework_TestCase {
 

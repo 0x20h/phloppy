@@ -1,6 +1,6 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -8,7 +8,7 @@ use Monolog\Logger;
 class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @var \Disque\Stream\Pool
+     * @var \Phloppy\Stream\Pool
      */
     private $link;
 
@@ -54,7 +54,7 @@ class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($consumer->getJob($queue));
         sleep(1);
         $j = $consumer->getJob($queue);
-        $this->assertInstanceOf('\Disque\Job', $j);
+        $this->assertInstanceOf('\Phloppy\Job', $j);
     }
 
     private function getPool()

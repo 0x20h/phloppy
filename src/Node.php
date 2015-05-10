@@ -1,6 +1,6 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
 class Node {
 

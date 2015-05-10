@@ -1,5 +1,5 @@
 <?php
-namespace Disque;
+namespace Phloppy;
 
 class Job {
 

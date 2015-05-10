@@ -1,11 +1,11 @@
 <?php
-namespace Disque;
+namespace Phloppy;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-use Disque\Exception\CommandException;
-use Disque\Exception\ConnectException;
+use Phloppy\Exception\CommandException;
+use Phloppy\Exception\ConnectException;
 
 class Consumer extends Client {
 

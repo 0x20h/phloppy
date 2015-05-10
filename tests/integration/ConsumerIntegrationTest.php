@@ -1,6 +1,6 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;

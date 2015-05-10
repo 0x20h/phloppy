@@ -1,14 +1,14 @@
 <?php
 
-namespace Disque\Stream;
+namespace Phloppy\Stream;
 
-use Disque\Stream;
+use Phloppy\Stream;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Disque\Exception\ConnectException;
+use Phloppy\Exception\ConnectException;
 
 /**
- * Disque Node Pool.
+ * Phloppy Node Pool.
  */
 class Pool implements Stream {
     /**

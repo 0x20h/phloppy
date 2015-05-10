@@ -1,12 +1,12 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
 class ClientTest extends \PHPUnit_Framework_TestCase {
 
     public function testAuthOk()
     {
-        $mock = $this->getMock('\Disque\Stream');
+        $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+OK');
 
@@ -17,7 +17,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
 
     public function testPingPong()
     {
-        $mock = $this->getMock('\Disque\Stream');
+        $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+PONG');
 

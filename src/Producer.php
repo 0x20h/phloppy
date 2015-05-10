@@ -1,12 +1,12 @@
 <?php
-namespace Disque;
+namespace Phloppy;
 
-use Disque\Stream\DefaultStream;
+use Phloppy\Stream\DefaultStream;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-use Disque\Exception\CommandException;
-use Disque\Exception\ConnectException;
+use Phloppy\Exception\CommandException;
+use Phloppy\Exception\ConnectException;
 
 class Producer extends Client {
 

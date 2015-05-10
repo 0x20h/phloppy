@@ -1,8 +1,8 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
-use Disque\Exception\CommandException;
+use Phloppy\Exception\CommandException;
 
 /**
  * Redis protocol implementation.

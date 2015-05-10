@@ -1,7 +1,7 @@
 <?php
 
-namespace Disque\Exception;
+namespace Phloppy\Exception;
 
-use Disque\Exception;
+use Phloppy\Exception;
 
 class CommandException extends Exception {}

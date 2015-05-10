@@ -1,6 +1,6 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
 class ProducerTest extends \PHPUnit_Framework_TestCase {
 
@@ -8,7 +8,7 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
     {
 
         $id = 'DI87152bb815a18ae31dc0d8be1bcd1a6ff2cbbd050002SQ';
-        $mock = $this->getMock('\Disque\Stream');
+        $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+' . $id);
 
@@ -19,12 +19,12 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
 
 
     /**
-     * @expectedException \Disque\Exception\CommandException
+     * @expectedException \Phloppy\Exception\CommandException
      * @expectedExceptionMessage ERR Foo
      */
     public function testAddJobWithInvalidReplicate()
     {
-        $mock = $this->getMock('\Disque\Stream');
+        $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->any())->method('write')->willReturn($mock);
         $mock->expects($this->any())->method('readLine')->willReturn("-ERR Foo");
         $p = new Producer($mock);
@@ -33,7 +33,7 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
 
     public function testReplicationTimeout()
     {
-        $mock = $this->getMock('\Disque\Stream');
+        $mock = $this->getMock('\Phloppy\Stream');
         $p = new Producer($mock);
         $rand = rand();
         $p->setReplicationTimeout($rand);
@@ -42,7 +42,7 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
 
     public function testReplicationFactor()
     {
-        $mock = $this->getMock('\Disque\Stream');
+        $mock = $this->getMock('\Phloppy\Stream');
         $p = new Producer($mock);
         $rand = rand();
         $p->setReplicationFactor($rand);

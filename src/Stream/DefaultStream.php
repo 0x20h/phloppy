@@ -1,9 +1,9 @@
 <?php
 
-namespace Disque\Stream;
+namespace Phloppy\Stream;
 
-use Disque\Stream;
-use Disque\Exception\ConnectException;
+use Phloppy\Stream;
+use Phloppy\Exception\ConnectException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

@@ -1,10 +1,10 @@
 <?php
-namespace Disque;
+namespace Phloppy;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-use Disque\Exception\CommandException;
+use Phloppy\Exception\CommandException;
 
 class Client {
 

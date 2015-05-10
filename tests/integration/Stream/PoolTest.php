@@ -1,6 +1,6 @@
 <?php
 
-namespace Disque\Stream;
+namespace Phloppy\Stream;
 
 class PoolTest extends \PHPUnit_Framework_TestCase {
 
@@ -17,7 +17,7 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException \Disque\Exception\ConnectException
+     * @expectedException \Phloppy\Exception\ConnectException
      * @expectedExceptionMessage unable to connect to any of [tcp://totally.unknown.host:35594]
      */
     public function testConnectFails()

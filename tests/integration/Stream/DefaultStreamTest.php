@@ -1,11 +1,11 @@
 <?php
 
-namespace Disque\Stream;
+namespace Phloppy\Stream;
 
 class DefaultStreamTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @expectedException \Disque\Exception\ConnectException
+     * @expectedException \Phloppy\Exception\ConnectException
      */
     public function testConnectFails()
     {

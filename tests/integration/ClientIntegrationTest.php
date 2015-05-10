@@ -1,15 +1,15 @@
 <?php
 
-namespace Disque;
+namespace Phloppy;
 
-use Disque\Exception\CommandException;
+use Phloppy\Exception\CommandException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 class ClientIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @var \Disque\Stream\Pool
+     * @var \Phloppy\Stream\Pool
      */
     private $link;
 
