@@ -99,7 +99,7 @@ class DefaultStream implements Stream {
      * Write bytes to the stream.
      *
      * @param string $msg
-     * @param int $len
+     * @param int|null $len
      * @return DefaultStream This instance.
      */
     public function write($msg, $len = null)

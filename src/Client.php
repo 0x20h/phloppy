@@ -20,7 +20,7 @@ class Client {
 
     /**
      * @param Stream $stream
-     * @param LoggerInterface $log
+     * @param LoggerInterface|null $log Logger instance.
      */
     public function __construct(Stream $stream, LoggerInterface $log = null)
     {
@@ -28,7 +28,7 @@ class Client {
             $log = new NullLogger();
         }
 
-        $this->log = $log;
+        $this->log    = $log;
         $this->stream = $stream;
     }
 
@@ -42,7 +42,7 @@ class Client {
      */
     public function auth($password)
     {
-        $rsp = $this->send(["AUTH", $password]);
+        $rsp = $this->send(['AUTH', $password]);
         return $rsp === 'OK';
     }
 
@@ -68,7 +68,7 @@ class Client {
 
         $sections = preg_split('/^#/m', $rsp);
         foreach ($sections as $section) {
-            $lines = explode("\r\n", trim($section));
+            $lines  = explode("\r\n", trim($section));
             $header = trim($lines[0]);
             array_shift($lines);
             $lines = array_reduce($lines, function($c, $e) {
@@ -89,8 +89,8 @@ class Client {
      */
     public function hello()
     {
-        $nodes = [];
-        $rsp = $this->send(['HELLO']);
+        $nodes   = [];
+        $rsp     = $this->send(['HELLO']);
         $version = array_shift($rsp);
 
         switch($version) {
@@ -99,7 +99,7 @@ class Client {
                 $protocol = 'tcp';
 
                 foreach($rsp as $node) {
-                    $server = $protocol .'://'.$node[1].':'.$node[2];
+                    $server  = $protocol .'://'. $node[1] .':'. $node[2];
                     $nodes[] = new Node($node[0], $server, $node[3]);
                 }
 
