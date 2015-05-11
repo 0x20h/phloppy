@@ -86,6 +86,6 @@ class Consumer extends Client {
     public function fastAck(Job $job)
     {
         assert($job->getId() != null);
-        return $this->send(['FASTACK', $job->getId()]);
+        return (int) $this->send(['FASTACK', $job->getId()]);
     }
 }
