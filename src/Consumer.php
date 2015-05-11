@@ -13,21 +13,25 @@ class Consumer extends Client {
     /**
      * @param string|string[] $queues
      * @param int $count
-     * @param int $timeout_ms
+     * @param int $timeoutMs
      * @return Job[]
      */
-    public function getJobs($queues, $count = 1, $timeout_ms = 200)
+    public function getJobs($queues, $count = 1, $timeoutMs = 200)
     {
         $jobs = [];
 
         $rsp = $this->send(array_merge([
             'GETJOB',
             'TIMEOUT',
-            $timeout_ms,
+            $timeoutMs,
             'COUNT',
             (int) $count,
             'FROM',
         ], (array) $queues));
+
+        if (!is_array($rsp)) {
+            return $jobs;
+        }
 
         foreach($rsp as $job) {
             $jobs[] = Job::create([
@@ -43,13 +47,13 @@ class Consumer extends Client {
     /**
      * Retrieve a single job from the given queues
      * @param string|string[] $queues
-     * @param int $timeout_ms
+     * @param int $timeoutMs
      * @return Job|null
      */
-    public function getJob($queues, $timeout_ms = 200) {
-        $jobs = $this->getJobs($queues, 1, $timeout_ms);
+    public function getJob($queues, $timeoutMs = 200) {
+        $jobs = $this->getJobs($queues, 1, $timeoutMs);
 
-        if(!$jobs) {
+        if(empty($jobs)) {
             return null;
         }
 
@@ -67,10 +71,18 @@ class Consumer extends Client {
     public function ack(Job $job)
     {
         assert($job->getId() != null);
-        return $this->send(['ACKJOB', $job->getId()]);
+        return (int) $this->send(['ACKJOB', $job->getId()]);
     }
 
 
+    /**
+     * Fast Acknowledge a job execution.
+     *
+     * @param Job $job
+     *
+     * @return int Number of Jobs acknowledged.
+     * @see https://github.com/antirez/disque#fast-acknowledges
+     */
     public function fastAck(Job $job)
     {
         assert($job->getId() != null);

@@ -8,14 +8,14 @@ class RespTest extends \PHPUnit_Framework_TestCase {
     {
         $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->any())->method('readLine')->willReturn('+FOO');
-        $this->assertEquals('FOO', Resp::deserialize($mock));
+        $this->assertEquals('FOO', RespUtils::deserialize($mock));
     }
 
     public function testReadInt()
     {
         $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->any())->method('readLine')->willReturn(':42');
-        $this->assertEquals(42, Resp::deserialize($mock));
+        $this->assertEquals(42, RespUtils::deserialize($mock));
     }
 
     /**
@@ -26,7 +26,7 @@ class RespTest extends \PHPUnit_Framework_TestCase {
     {
         $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->any())->method('readLine')->willReturn("-ERR Foo");
-        Resp::deserialize($mock);
+        RespUtils::deserialize($mock);
     }
 
     /**
@@ -37,6 +37,6 @@ class RespTest extends \PHPUnit_Framework_TestCase {
     {
         $mock = $this->getMock('\Phloppy\Stream');
         $mock->expects($this->any())->method('readLine')->willReturn("/FOO");
-        Resp::deserialize($mock);
+        RespUtils::deserialize($mock);
     }
 }

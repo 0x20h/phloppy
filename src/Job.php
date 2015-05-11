@@ -8,7 +8,7 @@ class Job {
      *
      * @var string
      */
-    private $id = null;
+    private $id = '';
 
 
     /**
@@ -16,7 +16,7 @@ class Job {
      *
      * @var string
      */
-    private $queue;
+    private $queue = '';
 
 
     /**
@@ -24,7 +24,7 @@ class Job {
      *
      * @var string
      */
-    private $body;
+    private $body = '';
 
 
     /**
@@ -66,7 +66,7 @@ class Job {
     /**
      * Return the job id.
      *
-     * @return null|string
+     * @return string
      */
     public function getId()
     {
@@ -102,7 +102,7 @@ class Job {
      */
     public function setDelay($delay)
     {
-        $this->delay = $delay;
+        $this->delay = (int) $delay;
     }
 
     /**
@@ -124,7 +124,7 @@ class Job {
     /**
      * @return int
      */
-    public function getTTL()
+    public function getTtL()
     {
         return $this->ttl;
     }
@@ -146,6 +146,12 @@ class Job {
     }
 
 
+    /**
+     * Job Factory method.
+     *
+     * @param array $args
+     * @return Job
+     */
     public static function create(array $args)
     {
         $job = new Job($args['body']);
@@ -158,11 +164,11 @@ class Job {
             $job->queue = $args['queue'];
         }
 
-        // @TODO add other variables from GETJOB/SHOW
+        // @TODO add other variables
         return $job;
     }
 
-    function __toString()
+    public function __toString()
     {
         return $this->getId();
     }

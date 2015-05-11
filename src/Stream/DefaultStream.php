@@ -31,9 +31,10 @@ class DefaultStream implements Stream {
             $log = new NullLogger();
         }
 
-        $this->log = $log;
+        $this->log    = $log;
         $this->server = $server;
-        $this->connect($server);
+
+        $this->connect();
     }
 
     /**
@@ -46,9 +47,9 @@ class DefaultStream implements Stream {
     private function connect()
     {
         $timeout = 3;
-        $errstr = '';
-        $errno = 0;
-        $stream = @stream_socket_client($this->server, $errno, $errstr, $timeout);
+        $errstr  = '';
+        $errno   = 0;
+        $stream  = @stream_socket_client($this->server, $errno, $errstr, $timeout);
 
         if (!$stream) {
             $this->log->warning('unable to connect to '. $this->server. ': '. $errstr);
@@ -77,20 +78,20 @@ class DefaultStream implements Stream {
     public function readLine()
     {
         $line = stream_get_line($this->stream, 65536, "\r\n");
-        $this->log->debug("readLine()", [$line]);
+        $this->log->debug('readLine()', [$line]);
         return $line;
     }
 
     /**
      * Read bytes off from the stream.
      *
-     * @param int $maxlen
+     * @param int|null $maxlen
      * @return string
      */
     public function readBytes($maxlen = null)
     {
         $out = stream_get_contents($this->stream, $maxlen);
-        $this->log->debug("readBytes()", [$maxlen, $out]);
+        $this->log->debug('readBytes()', [$maxlen, $out]);
         return $out;
     }
 
@@ -99,12 +100,12 @@ class DefaultStream implements Stream {
      *
      * @param string $msg
      * @param int $len
-     * @return Stream this instance.
+     * @return DefaultStream This instance.
      */
     public function write($msg, $len = null)
     {
         $bytes = fwrite($this->stream, $msg);
-        $this->log->debug("write()", ['written' => $bytes, 'len' => $len, 'msg' => $msg]);
+        $this->log->debug('write()', ['written' => $bytes, 'len' => $len, 'msg' => $msg]);
         assert($bytes == $len ? $len : strlen($msg));
 
         return $this;

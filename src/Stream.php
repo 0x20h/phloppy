@@ -19,7 +19,7 @@ interface Stream {
     public function isConnected();
 
     /**
-     * Read a line from the stream
+     * Read a line from the stream.
      *
      * @return string
      */
@@ -28,15 +28,18 @@ interface Stream {
     /**
      * Read bytes off from the stream.
      *
-     * @param int $maxlen
+     * @param int|null $maxlen
      * @return string The response.
      */
     public function readBytes($maxlen = null);
 
 
     /**
-     * Read
-     * @param $msg
+     * Write the given message to the stream.
+     *
+     * @param string $msg
+     * @param int|null $len
+     *
      * @return Stream the instance.
      */
     public function write($msg, $len = null);

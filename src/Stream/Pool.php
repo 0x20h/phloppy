@@ -28,7 +28,7 @@ class Pool implements Stream {
 
     /**
      * @param array $servers
-     * @param LoggerInterface $log
+     * @param LoggerInterface|null $log
      * @throws ConnectException
      */
     public function __construct(array $servers = array(), LoggerInterface $log = null)
@@ -39,7 +39,7 @@ class Pool implements Stream {
             $log = new NullLogger();
         }
 
-        $this->log = $log;
+        $this->log       = $log;
         $this->connected = $this->connect();
     }
 
@@ -75,7 +75,7 @@ class Pool implements Stream {
     /**
      * Connect to a random node in the node list.
      *
-     * @return Stream Stream to a connected node.
+     * @return DefaultStream Stream to a connected node.
      *
      * @throws ConnectException
      */
@@ -113,7 +113,7 @@ class Pool implements Stream {
     /**
      * Read bytes off from the stream.
      *
-     * @param int $maxlen
+     * @param int|null $maxlen
      * @return string The response.
      */
     public function readBytes($maxlen = null)

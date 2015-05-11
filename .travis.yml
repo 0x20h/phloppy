@@ -1,23 +1,27 @@
 language: php
 
 php:
-  - 5.5
-  - 5.6
-  - nightly
+    - 5.5
+    - 5.6
+    - nightly
 
 before_script:
-  - curl --version
-  - composer self-update
-  - composer install --no-interaction --prefer-source
-  - git clone https://github.com/antirez/disque.git
-  - cd disque
-  - make
-  - src/disque-server &
-  - cd ..
+    - curl --version
+    - composer self-update
+    - composer install --no-interaction --prefer-source
+    - git clone https://github.com/antirez/disque.git
+    - cd disque
+    - make
+    - src/disque-server &
+    - cd ..
 
 matrix:
-  allow_failures:
-    - php: nightly
+    allow_failures:
+        - php: nightly
 
 script:
-  - ./vendor/bin/phpunit
+    - ./vendor/bin/phpunit --coverage-clover=coverage.clover
+
+after_script:
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover

@@ -11,7 +11,7 @@ use Phloppy\Exception\CommandException;
  * the redis binary protocol. A lot of the code was inspired by
  * ptrofimov/tinyredisclient.
  */
-class Resp {
+class RespUtils {
 
     /**
      * @param array $args
@@ -36,7 +36,6 @@ class Resp {
      */
     public static function deserialize(Stream $stream)
     {
-        $out = null;
         $rsp = $stream->readLine();
 
         list($type, $result) = [$rsp[0], substr($rsp, 1, strlen($rsp))];

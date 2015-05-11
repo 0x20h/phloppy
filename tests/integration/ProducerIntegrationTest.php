@@ -33,9 +33,9 @@ class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
         $queue = 'test-'.substr(sha1(mt_rand()), 6);
         $client= new Producer($this->link);
         $job = new Job("foo");
-        $this->assertNull($job->getId());
+        $this->assertEquals('', $job->getId());
         $client->addJob($queue, $job);
-        $this->assertNotNull($job->getId());
+        $this->assertNotEquals('', $job->getId());
     }
 
 
@@ -48,9 +48,9 @@ class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
         $job->setDelay(1);
         $job->setTtl(4);
         $job->setRetry(1);
-        $this->assertNull($job->getId());
+        $this->assertEquals('', $job->getId());
         $producer->addJob($queue, $job);
-        $this->assertNotNull($job->getId());
+        $this->assertNotEquals('', $job->getId());
         $this->assertNull($consumer->getJob($queue));
         sleep(1);
         $j = $consumer->getJob($queue);

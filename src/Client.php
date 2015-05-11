@@ -19,7 +19,7 @@ class Client {
     protected $log;
 
     /**
-     * @param array $servers Array of server info (e.g. tcp://128.0.01:4444/)
+     * @param Stream $stream
      * @param LoggerInterface $log
      */
     public function __construct(Stream $stream, LoggerInterface $log = null)
@@ -92,9 +92,10 @@ class Client {
         $nodes = [];
         $rsp = $this->send(['HELLO']);
         $version = array_shift($rsp);
+
         switch($version) {
             case 1:
-                $active = array_shift($rsp);
+                /* $active = */ array_shift($rsp);
                 $protocol = 'tcp';
 
                 foreach($rsp as $node) {
@@ -119,6 +120,6 @@ class Client {
      */
     protected function send(array $args = [])
     {
-        return Resp::deserialize($this->stream->write(Resp::serialize($args)));
+        return RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
     }
 }

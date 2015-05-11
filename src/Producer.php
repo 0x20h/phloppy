@@ -15,14 +15,14 @@ class Producer extends Client {
      *
      * @var int
      */
-    private $replication_timeout = 2000;
+    private $replicationTimeout = 2000;
 
     /**
      * Replication factor for jobs.
      *
      * @var int
      */
-    private $replication_factor = 1;
+    private $replicationFactor = 1;
 
 
     /**
@@ -38,11 +38,11 @@ class Producer extends Client {
             'ADDJOB',
             $queue,
             $job->getBody(),
-            $this->replication_timeout,
-            'REPLICATE', $this->replication_factor,
+            $this->replicationTimeout,
+            'REPLICATE', $this->replicationFactor,
             'DELAY', $job->getDelay(),
             'RETRY', $job->getRetry(),
-            'TTL', $job->getTTL()
+            'TTL', $job->getTtL()
         ]);
 
         $job->setId($id);
@@ -54,15 +54,15 @@ class Producer extends Client {
      */
     public function getReplicationTimeout()
     {
-        return $this->replication_timeout;
+        return $this->replicationTimeout;
     }
 
     /**
-     * @param int $replication_timeout
+     * @param int $replicationTimeout
      */
-    public function setReplicationTimeout($replication_timeout)
+    public function setReplicationTimeout($replicationTimeout)
     {
-        $this->replication_timeout = $replication_timeout;
+        $this->replicationTimeout = $replicationTimeout;
     }
 
     /**
@@ -70,14 +70,14 @@ class Producer extends Client {
      */
     public function getReplicationFactor()
     {
-        return $this->replication_factor;
+        return $this->replicationFactor;
     }
 
     /**
-     * @param int $replication_factor
+     * @param int $replicationFactor
      */
-    public function setReplicationFactor($replication_factor)
+    public function setReplicationFactor($replicationFactor)
     {
-        $this->replication_factor = $replication_factor;
+        $this->replicationFactor = $replicationFactor;
     }
 }
