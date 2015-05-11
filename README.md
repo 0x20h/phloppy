@@ -11,7 +11,7 @@ A [Disque](https://github.com/antirez/disque) client for PHP 5.5.
 ## Installation
 
 ```
-composer require 0x20h/phloppy@~0.1
+composer require 0x20h/phloppy:~0.0
 ```
 
 ## Usage
