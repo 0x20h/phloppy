@@ -27,10 +27,10 @@ $job = $producer->addJob('test', Phloppy\Job::create(['body' => 42]));
 
 Commands:
 
-- getJob(queues)
-- getJobs(queues, numberOfJobs)
-- ack(job)
-- fastAck(job)
+- `getJob(queues)`
+- `getJobs(queues, numberOfJobs)`
+- `ack(job)`
+- `fastAck(job)`
 
 
 ### Consumer
@@ -46,10 +46,10 @@ $consumer->ack($job);
 
 Commands:
 
-- getJob(queues)
-- getJobs(queues, numberOfJobs)
-- ack(job)
-- fastAck(job)
+- `getJob(queues)`
+- `getJobs(queues, numberOfJobs)`
+- `ack(job)`
+- `fastAck(job)`
 
 
 ### Generic commands
