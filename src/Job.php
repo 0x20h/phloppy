@@ -145,6 +145,14 @@ class Job {
         return $this->queue;
     }
 
+    /**
+     * @param string $queue
+     */
+    public function setQueue($queue)
+    {
+        $this->queue = $queue;
+    }
+
 
     /**
      * Job Factory method.
@@ -157,15 +165,29 @@ class Job {
         $job = new Job($args['body']);
 
         if (isset($args['id'])) {
-            $job->id = $args['id'];
+            $job->setId($args['id']);
+            $job->setTtl(hexdec(substr($job->getId(), -4)));
         }
 
         if (isset($args['queue'])) {
-            $job->queue = $args['queue'];
+            $job->setQueue($args['queue']);
+        }
+
+        if (isset($args['ttl'])) {
+            $job->setTtl($args['ttl']);
         }
 
         // @TODO add other variables
         return $job;
+    }
+
+    /**
+     * Retrieve the originating node id.
+     *
+     * @return string|null The node id of the node where the job was published
+     */
+    public function getOriginNode() {
+       return $this->id ? substr($this->id, 3, 11) : null;
     }
 
     public function __toString()
