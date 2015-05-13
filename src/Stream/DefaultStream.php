@@ -64,8 +64,10 @@ class DefaultStream implements Stream {
 
     public function close()
     {
+        $this->log->info('closing connection: '. $this->server);
         stream_socket_shutdown($this->stream, STREAM_SHUT_RDWR);
         $this->stream = null;
+        $this->log->info('connection closed: '. $this->server);
         return true;
     }
 
