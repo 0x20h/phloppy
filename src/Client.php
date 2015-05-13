@@ -6,6 +6,9 @@ use Psr\Log\NullLogger;
 
 use Phloppy\Exception\CommandException;
 
+/**
+ * General disque Client.
+ */
 class Client {
 
     /**
@@ -111,7 +114,7 @@ class Client {
 
 
     /**
-     * Send request, retrieve response to the connected disque node.
+     * Send request and retrieve response to the connected disque node.
      *
      * @param array $args
      * @return array|int|null|string
@@ -120,6 +123,28 @@ class Client {
      */
     protected function send(array $args = [])
     {
-        return RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
+        $this->log->debug('send()ing command', $args);
+        $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
+        $this->log->debug('response', [$response]);
+
+        return $response;
+    }
+
+
+    /**
+     * Map Disque's job responses to Job objects.
+     *
+     * @param array $list Job response array from the disque server.
+     * @return Job[]
+     */
+    protected function mapJobs(array $list) {
+        return array_map(
+            function($element) { return Job::create([
+                'queue' => $element[0],
+                'id'    => $element[1],
+                'body'  => $element[2],
+            ]); },
+            $list
+        );
     }
 }
