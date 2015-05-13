@@ -27,7 +27,7 @@ $job = $producer->addJob('test', Phloppy\Job::create(['body' => 42]));
 
 Commands:
 
-- `addJob(queue, job)`
+- `addJob(queueName, job, [maxlen = 0], [async = false])`
 - `setReplicationTimeout(msecs)`
 - `setReplicationFactor(n)`
 
@@ -44,11 +44,27 @@ $consumer->ack($job);
 
 Commands:
 
-- `getJob(queues)`
-- `getJobs(queues, numberOfJobs)`
+- `getJob(queueNames)`
+- `getJobs(queueNames, numberOfJobs)`
 - `ack(job)`
 - `fastAck(job)`
 
+### Queue
+
+``` php
+$logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
+$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+$queue = new Phloppy\Queue($pool, $logger);
+// print out the current queue len on the connected node
+echo $queue->len('test');
+// get the latest job out of 'test' without removing it
+echo $queue->peek('test');
+```
+
+Commands:
+
+- `len(queueName)`
+- `peek(queueName)`
 
 ### Server
 
