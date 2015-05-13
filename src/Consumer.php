@@ -7,8 +7,10 @@ use Psr\Log\NullLogger;
 use Phloppy\Exception\CommandException;
 use Phloppy\Exception\ConnectException;
 
+/**
+ * Consumer client implementation.
+ */
 class Consumer extends Client {
-
 
     /**
      * @param string|string[] $queues
@@ -18,29 +20,17 @@ class Consumer extends Client {
      */
     public function getJobs($queues, $count = 1, $timeoutMs = 200)
     {
-        $jobs = [];
-
-        $rsp = $this->send(array_merge([
-            'GETJOB',
-            'TIMEOUT',
-            $timeoutMs,
-            'COUNT',
-            (int) $count,
-            'FROM',
-        ], (array) $queues));
-
-        if (!is_array($rsp)) {
-            return $jobs;
-        }
-
-        foreach($rsp as $job) {
-            $jobs[] = Job::create([
-                'id' => $job[1],
-                'body' => $job[2]
-            ]);
-        }
-
-        return $jobs;
+        return $this->mapJobs($this->send(array_merge(
+            [
+                'GETJOB',
+                'TIMEOUT',
+                $timeoutMs,
+                'COUNT',
+                (int) $count,
+                'FROM',
+            ],
+            (array) $queues
+        )));
     }
 
 
