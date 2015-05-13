@@ -27,11 +27,9 @@ $job = $producer->addJob('test', Phloppy\Job::create(['body' => 42]));
 
 Commands:
 
-- `getJob(queues)`
-- `getJobs(queues, numberOfJobs)`
-- `ack(job)`
-- `fastAck(job)`
-
+- `addJob(queue, job)`
+- `setReplicationTimeout(msecs)`
+- `setReplicationFactor(n)`
 
 ### Consumer
 
@@ -52,7 +50,7 @@ Commands:
 - `fastAck(job)`
 
 
-### Generic commands
+### Server
 
 ``` php
 $logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
@@ -60,6 +58,13 @@ $pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']
 $consumer = new Phloppy\Client($pool, $logger);
 $nodes = $consumer->hello();
 ```
+
+Commands:
+
+- `hello()`
+- `info()`
+- `ping()`
+- `auth(password)`
 
 # License
 
