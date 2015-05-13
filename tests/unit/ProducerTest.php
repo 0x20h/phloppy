@@ -31,6 +31,7 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
         $p->addJob('test', Job::create(['body' => 42]));
     }
 
+
     public function testReplicationTimeout()
     {
         $mock = $this->getMock('\Phloppy\Stream');
@@ -39,6 +40,7 @@ class ProducerTest extends \PHPUnit_Framework_TestCase {
         $p->setReplicationTimeout($rand);
         $this->assertEquals($rand, $p->getReplicationTimeout());
     }
+
 
     public function testReplicationFactor()
     {

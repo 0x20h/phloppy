@@ -2,91 +2,43 @@
 
 namespace Phloppy;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use Phloppy\Exception\ConnectException;
+class QueueIntegrationTest extends AbstractIntegrationTest {
 
-class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
-
-    /**
-     * @var Stream
-     */
-    private $stream;
-
-    protected function setUp()
+    public function testLen()
     {
-        if (empty($_ENV['DISQUE_SERVERS'])) {
-            return $this->markTestSkipped('no disque servers configured');
-        }
+        $queueName = 'test-'. substr(sha1(mt_rand()), 0, 6);
+        $queue = new Queue($this->stream, $this->log);
+        $producer = new Producer($this->stream, $this->log);
+        $consumer = new Consumer($this->stream, $this->log);
+        $job = new Job('job-body');
 
-        try {
-            $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-            $this->stream = new Stream\Pool($servers);
-        } catch (ConnectException $e) {
-            $this->markTestSkipped($e->getMessage());
-        }
+        $this->assertSame(0, $queue->len($queueName));
+        $job->setRetry(1);
+        $producer->addJob($queueName, $job);
+        $this->assertSame(1, $queue->len($queueName));
+        $consumedJob = $consumer->getJob($queueName);
+        $this->assertSame(0, $queue->len($queueName));
+
+        $this->assertEquals($job->getId(), $consumedJob->getId());
+        $this->assertEquals($job->getQueue(), $consumedJob->getQueue());
+
+        // should be retried after 1 second
+        usleep(1.2E6);
+        $this->assertSame(1, $queue->len($queueName));
+        $retriedJob = $consumer->getJob($queueName);
+        $this->assertSame(0, $queue->len($queueName));
+
+        $this->assertEquals($retriedJob, $consumedJob);
     }
-
-
-    protected function tearDown()
-    {
-        if ($this->stream) {
-            $this->stream->close();
-            $this->stream = null;
-        }
-    }
-
-
-    public function testGetJob()
-    {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $client= new Consumer($this->stream);
-        $job = $client->getJob($queue, 1);
-        $this->assertNull($job);
-    }
-
-    public function testAckUnknownJob()
-    {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $client= new Consumer($this->stream);
-        // ack an unknown job
-        $job = Job::create(['id' => 'DI37a52bb8dc160e3953111b6a9a7b10f56209320d0002SQ', 'body' => 'foo']);
-        $this->assertEquals(0, $client->ack($job));
-    }
-
-
-    public function testAckNewJob()
-    {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-
-        $consumer= new Consumer($this->stream);
-        $producer= new Producer($this->stream);
-        $job = $producer->addJob($queue, Job::create(['body' => '42']));
-        $consumer->getJob($queue);
-        $this->assertEquals(1, $consumer->ack($job));
-        $this->assertEquals(0, $consumer->ack($job));
-    }
-
-
-    public function testFastAck()
-    {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $consumer= new Consumer($this->stream);
-        $producer= new Producer($this->stream);
-        $job = $producer->addJob($queue, Job::create(['body' => '42']));
-        $this->assertEquals(1, $consumer->fastAck($job));
-        $this->assertEquals(0, $consumer->fastAck($job));
-    }
-
 
     public function testPeek()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $consumer= new Consumer($this->stream);
+        $queueName = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $queue= new Queue($this->stream);
         $producer= new Producer($this->stream);
-        $this->assertEmpty($consumer->peek($queue));
-        $job = $producer->addJob($queue, Job::create(['body' => 'test-peek']));
-        list($peekedJob) = $consumer->peek($queue);
+        $this->assertEmpty($queue->peek($queueName));
+        $job = $producer->addJob($queueName, Job::create(['body' => 'test-peek']));
+        list($peekedJob) = $queue->peek($queueName);
         $this->assertEquals($peekedJob->getId(), $job->getId());
     }
 }

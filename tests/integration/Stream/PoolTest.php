@@ -2,15 +2,26 @@
 
 namespace Phloppy\Stream;
 
+use Phloppy\Exception\ConnectException;
+
 class PoolTest extends \PHPUnit_Framework_TestCase {
 
     public function testConnectFailsPartly()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
+
+        try {
+            new Pool($servers);
+        } catch(ConnectException $e) {
+            $this->markTestSkipped($e->getMessage());
+        }
+
         $servers[] = 'tcp://totally.unknown.host:35594';
 
         for ($i = 0; $i < 100; $i++) {
             $pool = new Pool($servers);
+
+            // should always connect to one of the present servers and never fail
             $this->assertTrue($pool->isConnected());
             $pool->close();
         }
@@ -31,7 +42,13 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
     public function testReconnect()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $pool = new Pool($servers);
+
+        try {
+            $pool = new Pool($servers);
+        } catch(ConnectException $e) {
+            $this->markTestSkipped($e->getMessage());
+        }
+
         $this->assertTrue($pool->isConnected());
         $connected = $pool->getActiveServer();
         $pool->reconnect();
@@ -43,7 +60,13 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
     public function testGetServers()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $pool = new Pool($servers);
+
+        try {
+            $pool = new Pool($servers);
+        } catch(ConnectException $e) {
+            $this->markTestSkipped($e->getMessage());
+        }
+
         $this->assertSame($servers, $pool->getServers());
     }
 

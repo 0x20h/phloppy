@@ -5,29 +5,14 @@ namespace Phloppy;
 use Phloppy\Exception\CommandException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Phloppy\Exception\ConnectException;
 
-class ClientIntegrationTest extends \PHPUnit_Framework_TestCase {
-
-    /**
-     * @var \Phloppy\Stream\Pool
-     */
-    private $link;
-
-    protected function setUp()
-    {
-        if (empty($_ENV['DISQUE_SERVERS'])) {
-            return $this->markTestSkipped('no disque servers configured');
-        }
-
-        $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $this->link = new Stream\Pool($servers);
-    }
-
+class ClientIntegrationTest extends AbstractIntegrationTest {
 
     public function testAuth()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $client = new Client($this->link);
+        $client = new Client($this->stream);
 
         try {
             $ok = $client->auth('test');
@@ -40,7 +25,7 @@ class ClientIntegrationTest extends \PHPUnit_Framework_TestCase {
     public function testHello()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $client = new Client($this->link);
+        $client = new Client($this->stream);
         $nodes = $client->hello();
 
         $this->assertNotEmpty($nodes);
@@ -48,6 +33,9 @@ class ClientIntegrationTest extends \PHPUnit_Framework_TestCase {
 
         foreach($nodes as $node) {
             $allNodes[] = $node->getServer();
+            $this->assertNotEmpty($node->getId());
+            $this->assertNotEmpty($node->getPriority());
+            $this->assertNotEmpty($node->getServer());
         }
 
         $this->assertNotEmpty($allNodes);
@@ -56,14 +44,14 @@ class ClientIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     public function testPing()
     {
-        $client = new Client($this->link);
+        $client = new Client($this->stream);
         $this->assertTrue($client->ping());
     }
 
 
     public function testInfo()
     {
-        $client = new Client($this->link);
+        $client = new Client($this->stream);
         $info = $client->info();
         $this->assertArrayHasKey('Server', $info);
         $this->assertArrayHasKey('Clients', $info);
@@ -73,4 +61,5 @@ class ClientIntegrationTest extends \PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('Persistence', $info);
         $this->assertArrayHasKey('Stats', $info);
     }
+
 }

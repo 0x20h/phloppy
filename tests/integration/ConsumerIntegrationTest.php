@@ -2,30 +2,12 @@
 
 namespace Phloppy;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 
-class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
-
-    /**
-     * @var Stream
-     */
-    private $stream;
-
-    protected function setUp()
-    {
-        if (empty($_ENV['DISQUE_SERVERS'])) {
-            return $this->markTestSkipped('no disque servers configured');
-        }
-
-        $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        $this->stream = new Stream\Pool($servers);
-    }
-
+class ConsumerIntegrationTest extends AbstractIntegrationTest {
 
     public function testGetJob()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
         $client= new Consumer($this->stream);
         $job = $client->getJob($queue, 1);
         $this->assertNull($job);
@@ -33,7 +15,7 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     public function testAckUnknownJob()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
         $client= new Consumer($this->stream);
         // ack an unknown job
         $job = Job::create(['id' => 'DI37a52bb8dc160e3953111b6a9a7b10f56209320d0002SQ', 'body' => 'foo']);
@@ -43,7 +25,7 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     public function testAckNewJob()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
 
         $consumer= new Consumer($this->stream);
         $producer= new Producer($this->stream);
@@ -56,7 +38,7 @@ class ConsumerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     public function testFastAck()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
         $consumer= new Consumer($this->stream);
         $producer= new Producer($this->stream);
         $job = $producer->addJob($queue, Job::create(['body' => '42']));

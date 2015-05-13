@@ -1,7 +1,34 @@
 <?php
+
+namespace Phloppy;
+
 /**
- * Created by PhpStorm.
- * User: jan.kohlhof
- * Date: 11.05.15
- * Time: 23:04
+ * Queue introspection commands.
  */
+class Queue extends Client {
+
+    /**
+     * Returns the length of the queue.
+     *
+     * @param $queue
+     * @return int
+     */
+    public function len($queue)
+    {
+        return $this->send(['QLEN', $queue]);
+    }
+
+
+    /**
+     * Peek count jobs from the given queue without removing them.
+     *
+     * @param string $queue
+     * @param int $count
+     *
+     * @return Job[]
+     */
+    public function peek($queue, $count = 1)
+    {
+        return $this->mapJobs($this->send(['QPEEK', $queue, $count]));
+    }
+}
