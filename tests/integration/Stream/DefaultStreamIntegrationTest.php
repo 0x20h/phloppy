@@ -4,7 +4,7 @@ namespace Phloppy\Stream;
 
 use Phloppy\Exception\ConnectException;
 
-class DefaultStreamTest extends \PHPUnit_Framework_TestCase {
+class DefaultStreamIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @expectedException \Phloppy\Exception\ConnectException

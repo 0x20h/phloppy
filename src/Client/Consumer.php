@@ -1,11 +1,8 @@
 <?php
-namespace Phloppy;
+namespace Phloppy\Client;
 
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-
-use Phloppy\Exception\CommandException;
-use Phloppy\Exception\ConnectException;
+use Phloppy\Client;
+use Phloppy\Job;
 
 /**
  * Consumer client implementation.

@@ -1,6 +1,9 @@
 <?php
 
-namespace Phloppy;
+namespace Phloppy\Client;
+
+use Phloppy\Client;
+use Phloppy\Job;
 
 /**
  * Queue introspection commands.

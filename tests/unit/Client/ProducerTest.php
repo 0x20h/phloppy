@@ -1,6 +1,8 @@
 <?php
 
-namespace Phloppy;
+namespace Phloppy\Client;
+
+use Phloppy\Job;
 
 class ProducerTest extends \PHPUnit_Framework_TestCase {
 

@@ -3,15 +3,11 @@
 namespace Phloppy;
 
 use Phloppy\Exception\CommandException;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use Phloppy\Exception\ConnectException;
 
 class ClientIntegrationTest extends AbstractIntegrationTest {
 
     public function testAuth()
     {
-        $servers = explode(',', $_ENV['DISQUE_SERVERS']);
         $client = new Client($this->stream);
 
         try {
@@ -24,7 +20,6 @@ class ClientIntegrationTest extends AbstractIntegrationTest {
 
     public function testHello()
     {
-        $servers = explode(',', $_ENV['DISQUE_SERVERS']);
         $client = new Client($this->stream);
         $nodes = $client->hello();
 
