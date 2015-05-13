@@ -23,7 +23,7 @@ class QueueIntegrationTest extends AbstractIntegrationTest {
         $this->assertEquals($job->getQueue(), $consumedJob->getQueue());
 
         // should be retried after 1 second
-        usleep(1.2E6);
+        usleep(1.5E6);
         $this->assertSame(1, $queue->len($queueName));
         $retriedJob = $consumer->getJob($queueName);
         $this->assertSame(0, $queue->len($queueName));
