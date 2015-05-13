@@ -2,36 +2,12 @@
 
 namespace Phloppy;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-
-class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
-
-    /**
-     * @var \Phloppy\Stream\Pool
-     */
-    private $link;
-
-    protected function setUp()
-    {
-        if (empty($_ENV['DISQUE_SERVERS'])) {
-            return $this->markTestSkipped('no disque servers configured');
-        }
-
-        $this->link = $this->getPool();
-    }
-
-    protected function tearDown()
-    {
-        $this->link->close();
-        $this->link = null;
-    }
-
+class ProducerIntegrationTest extends AbstractIntegrationTest {
 
     public function testAddJob()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $client= new Producer($this->link);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $client= new Producer($this->stream);
         $job = new Job("foo");
         $this->assertEquals('', $job->getId());
         $client->addJob($queue, $job);
@@ -41,9 +17,9 @@ class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     public function testAddJobDelayed()
     {
-        $queue = 'test-'.substr(sha1(mt_rand()), 6);
-        $producer = new Producer($this->link);
-        $consumer = new Consumer($this->link);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $producer = new Producer($this->stream);
+        $consumer = new Consumer($this->stream);
         $job = new Job("foo");
         $job->setDelay(1);
         $job->setTtl(4);
@@ -52,14 +28,21 @@ class ProducerIntegrationTest extends \PHPUnit_Framework_TestCase {
         $producer->addJob($queue, $job);
         $this->assertNotEquals('', $job->getId());
         $this->assertNull($consumer->getJob($queue));
-        sleep(1);
+        usleep(1.2E6);
         $j = $consumer->getJob($queue);
         $this->assertInstanceOf('\Phloppy\Job', $j);
     }
 
-    private function getPool()
+    /**
+     * @expectedException \Phloppy\Exception\CommandException
+     * @expectedExceptionMessage MAXLEN Queue is already longer than the specified MAXLEN count
+     */
+    public function testAddJobMaxlen()
     {
-        $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-        return new Stream\Pool($servers);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $producer = new Producer($this->stream);
+        $producer->addJob($queue, Job::create(['body' => 'job-maxlen-1']));
+        $producer->addJob($queue, Job::create(['body' => 'job-maxlen-2']));
+        $producer->addJob($queue, Job::create(['body' => 'job-maxlen-3']), 1);
     }
 }

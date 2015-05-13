@@ -1,7 +1,41 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jan.kohlhof
- * Date: 13.05.15
- * Time: 17:22
- */
+
+namespace Phloppy;
+
+use Phloppy\Exception\ConnectException;
+
+abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
+{
+
+    /**
+     * @var \Phloppy\Stream\Pool
+     */
+    protected $stream;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $log;
+
+    protected function setUp()
+    {
+        if (empty($_ENV['DISQUE_SERVERS'])) {
+            return $this->markTestSkipped('no disque servers configured');
+        }
+
+        try {
+            $servers = explode(',', $_ENV['DISQUE_SERVERS']);
+            $this->log = new \Psr\Log\NullLogger(); // new \Monolog\Logger(new \Monolog\Handler\StreamHandler('php://stdout'));
+            $this->stream = new Stream\Pool($servers, $this->log);
+        } catch (ConnectException $e) {
+            $this->markTestSkipped($e->getMessage());
+        }
+    }
+
+    protected function tearDown()
+    {
+        if ($this->stream) {
+            $this->stream->close();
+        }
+    }
+}
