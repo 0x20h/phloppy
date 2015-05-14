@@ -12,7 +12,7 @@ use Phloppy\Exception\CommandException;
 /**
  * General disque Client.
  */
-abstract class Client {
+abstract class AbstractClient {
 
     /**
      * @var Stream

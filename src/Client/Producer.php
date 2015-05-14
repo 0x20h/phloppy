@@ -6,7 +6,7 @@ use Phloppy\Job;
 /**
  * Producer client implementation.
  */
-class Producer extends Client {
+class Producer extends AbstractClient {
 
     /**
      * Timeout in ms that disque should block the client while replicating the job.

@@ -7,7 +7,7 @@ use Phloppy\Job;
 /**
  * Queue introspection commands.
  */
-class Queue extends Client {
+class Queue extends AbstractClient {
 
     /**
      * Returns the length of the queue.

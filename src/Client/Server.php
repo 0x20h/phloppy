@@ -7,7 +7,7 @@ use Phloppy\Node;
 /**
  * Disque server commands.
  */
-class Server extends Client {
+class Server extends AbstractClient {
 
     /**
      * Authenticate against disque.

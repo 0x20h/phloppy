@@ -6,7 +6,7 @@ use Phloppy\Job;
 /**
  * Consumer client implementation.
  */
-class Consumer extends Client {
+class Consumer extends AbstractClient {
 
     /**
      * @param string|string[] $queues
