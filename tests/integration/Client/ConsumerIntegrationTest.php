@@ -3,7 +3,6 @@
 namespace Phloppy\Client;
 
 
-use Phloppy\AbstractIntegrationTest;
 use Phloppy\Job;
 
 class ConsumerIntegrationTest extends AbstractIntegrationTest {

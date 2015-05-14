@@ -1,11 +1,13 @@
 <?php
 
-namespace Phloppy;
+namespace Phloppy\Client;
 
 use Phloppy\Exception\ConnectException;
+use Phloppy\Stream\Pool;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
-{
+abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @var \Phloppy\Stream\Pool
@@ -25,8 +27,8 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
 
         try {
             $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-            $this->log = new \Psr\Log\NullLogger(); // new \Monolog\Logger(new \Monolog\Handler\StreamHandler('php://stdout'));
-            $this->stream = new Stream\Pool($servers, $this->log);
+            $this->log = new NullLogger(); // new \Monolog\Logger(new \Monolog\Handler\StreamHandler('php://stdout'));
+            $this->stream = new Pool($servers, $this->log);
         } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());
         }

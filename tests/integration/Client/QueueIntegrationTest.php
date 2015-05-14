@@ -2,7 +2,6 @@
 
 namespace Phloppy\Client;
 
-use Phloppy\AbstractIntegrationTest;
 use Phloppy\Job;
 
 class QueueIntegrationTest extends AbstractIntegrationTest {

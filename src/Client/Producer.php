@@ -1,7 +1,6 @@
 <?php
 namespace Phloppy\Client;
 
-use Phloppy\Client;
 use Phloppy\Job;
 
 /**

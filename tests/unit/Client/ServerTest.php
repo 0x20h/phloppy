@@ -1,8 +1,8 @@
 <?php
 
-namespace Phloppy;
+namespace Phloppy\Client;
 
-class ClientTest extends \PHPUnit_Framework_TestCase {
+class ServerTest extends \PHPUnit_Framework_TestCase {
 
     public function testAuthOk()
     {
@@ -10,7 +10,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+OK');
 
-        $client = new Client($mock);
+        $client = new Server($mock);
         $this->assertTrue($client->auth('test'));
     }
 
@@ -21,7 +21,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+PONG');
 
-        $client = new Client($mock);
+        $client = new Server($mock);
         $this->assertTrue($client->ping());
     }
 }

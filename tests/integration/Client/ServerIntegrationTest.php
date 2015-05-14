@@ -1,17 +1,17 @@
 <?php
 
-namespace Phloppy;
+namespace Phloppy\Client;
 
 use Phloppy\Exception\CommandException;
 
-class ClientIntegrationTest extends AbstractIntegrationTest {
+class ServerIntegrationTest extends AbstractIntegrationTest {
 
     public function testAuth()
     {
-        $client = new Client($this->stream);
+        $server = new Server($this->stream);
 
         try {
-            $ok = $client->auth('test');
+            $ok = $server->auth('test');
             $this->assertNotNull($ok);
         } catch (CommandException $e) {
             $this->assertEquals('ERR Client sent AUTH, but no password is set', $e->getMessage());
@@ -20,8 +20,8 @@ class ClientIntegrationTest extends AbstractIntegrationTest {
 
     public function testHello()
     {
-        $client = new Client($this->stream);
-        $nodes = $client->hello();
+        $server = new Server($this->stream);
+        $nodes = $server->hello();
 
         $this->assertNotEmpty($nodes);
         $allNodes = [];
@@ -39,15 +39,15 @@ class ClientIntegrationTest extends AbstractIntegrationTest {
 
     public function testPing()
     {
-        $client = new Client($this->stream);
-        $this->assertTrue($client->ping());
+        $server = new Server($this->stream);
+        $this->assertTrue($server->ping());
     }
 
 
     public function testInfo()
     {
-        $client = new Client($this->stream);
-        $info = $client->info();
+        $server = new Server($this->stream);
+        $info = $server->info();
         $this->assertArrayHasKey('Server', $info);
         $this->assertArrayHasKey('Clients', $info);
         $this->assertArrayHasKey('Memory', $info);

@@ -1,7 +1,6 @@
 <?php
 namespace Phloppy\Client;
 
-use Phloppy\Client;
 use Phloppy\Job;
 
 /**
@@ -34,8 +33,8 @@ class Consumer extends Client {
     /**
      * Retrieve a single job from the given queues
      * @param string|string[] $queues
-     * @param int $timeoutMs
-     * @return Job|null
+     * @param int $timeoutMs How long to block client when waiting for new jobs.
+     * @return Job|null A Job if found, null otherwise.
      */
     public function getJob($queues, $timeoutMs = 200) {
         $jobs = $this->getJobs($queues, 1, $timeoutMs);
