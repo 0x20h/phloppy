@@ -27,7 +27,8 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
 
         try {
             $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-            $this->log = new NullLogger(); // new \Monolog\Logger(new \Monolog\Handler\StreamHandler('php://stdout'));
+            $this->log = new NullLogger();
+            //$this->log = new \Monolog\Logger(new \Monolog\Handler\StreamHandler('php://stdout'));
             $this->stream = new Pool($servers, $this->log);
         } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());

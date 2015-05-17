@@ -39,4 +39,11 @@ class RespTest extends \PHPUnit_Framework_TestCase {
         $mock->expects($this->any())->method('readLine')->willReturn("/FOO");
         RespUtils::deserialize($mock);
     }
+
+    public function testEmptyBulkStringReponse()
+    {
+        $mock = $this->getMock('\Phloppy\Stream');
+        $mock->expects($this->any())->method('readLine')->willReturn("$-1");
+        $this->assertNull(RespUtils::deserialize($mock));
+    }
 }

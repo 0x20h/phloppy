@@ -12,7 +12,7 @@ class ProducerIntegrationTest extends AbstractIntegrationTest {
         $client= new Producer($this->stream);
         $job = new Job("foo");
         $this->assertEquals('', $job->getId());
-        $client->addJob($queue, $job);
+        $client->addJob($queue, $job, true);
         $this->assertNotEquals('', $job->getId());
     }
 
