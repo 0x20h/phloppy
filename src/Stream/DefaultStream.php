@@ -73,13 +73,19 @@ class DefaultStream implements Stream {
 
 
     /**
-     * Read a line from the stream
+     * Read a line from the stream.
      *
      * @return string
+     * @throws StreamException If an error occurs while reading from the stream.
      */
     public function readLine()
     {
         $line = stream_get_line($this->stream, 65536, "\r\n");
+
+        if (false === $line) {
+            throw new StreamException('stream_get_line returned false');
+        }
+
         $this->log->debug('readLine()', [$line]);
         return $line;
     }

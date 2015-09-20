@@ -4,6 +4,7 @@ namespace Phloppy\Client;
 use Phloppy\Job;
 use Phloppy\RespUtils;
 use Phloppy\Stream;
+use Phloppy\Stream\StreamException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -50,7 +51,16 @@ abstract class AbstractClient {
     protected function send(array $args = [])
     {
         $this->log->debug('send()ing command', $args);
-        $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
+
+        try {
+            $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
+        } catch(StreamException $e) {
+            $this->log->emergency($e->getMessage(), $args);
+            throw new CommandException('Error fetching the response', null, $e);
+        } catch(\RuntimeException $e) {
+            $this->log->emergency($e->getMessage(), $args);
+            throw new CommandException('unable to handle server response', null, $e);
+        }
         $this->log->debug('response', [$response]);
 
         return $response;
