@@ -2,7 +2,6 @@
 
 namespace Phloppy\Client;
 
-
 use Phloppy\Job;
 
 class ConsumerIntegrationTest extends AbstractIntegrationTest {
@@ -46,5 +45,30 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
         $job = $producer->addJob($queue, Job::create(['body' => '42']));
         $this->assertEquals(1, $consumer->fastAck($job));
         $this->assertEquals(0, $consumer->fastAck($job));
+    }
+
+
+    public function testFindJob()
+    {
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $consumer = new Consumer($this->stream);
+        $producer = new Producer($this->stream);
+        $job      = $producer->addJob($queue, Job::create(['body' => __METHOD__]));
+        $findJob  = $consumer->findJob($job->getId());
+        $this->assertEquals($findJob->getBody(), $job->getBody());
+        $findJob  = $consumer->findJob('DIf7198058ffab72d8692e5ece37fb0cfeecabd940023cSQ');
+        $this->assertNull($findJob);
+    }
+
+
+    /**
+     * @expectedException \Phloppy\Exception\CommandException
+     * @expectedExceptionMessage BADID Invalid Job ID format.
+     */
+    public function testFindJobBadJobId()
+    {
+
+        $consumer = new Consumer($this->stream);
+        $consumer->findJob('foo');
     }
 }

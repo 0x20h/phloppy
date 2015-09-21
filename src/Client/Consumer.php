@@ -84,7 +84,7 @@ class Consumer extends AbstractClient {
      *
      * @param string $jobId
      *
-     * @return Job[]
+     * @return Job
      * @throws CommandException
      */
     public function findJob($jobId)
