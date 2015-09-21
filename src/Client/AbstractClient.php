@@ -54,16 +54,13 @@ abstract class AbstractClient {
 
         try {
             $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
+            $this->log->debug('response', [$response]);
+            return $response;
         } catch(StreamException $e) {
-            $this->log->emergency($e->getMessage(), $args);
-            throw new CommandException('Error fetching the response', null, $e);
-        } catch(\RuntimeException $e) {
-            $this->log->emergency($e->getMessage(), $args);
-            throw new CommandException('unable to handle server response', null, $e);
+            $this->log->warning($e->getMessage());
         }
-        $this->log->debug('response', [$response]);
 
-        return $response;
+        return null;
     }
 
 
@@ -78,7 +75,7 @@ abstract class AbstractClient {
             function($element) { return Job::create([
                 'queue' => $element[0],
                 'id'    => $element[1],
-                'body'  => $element[2],
+                'body'  => isset($element[2]) ? $element[2] : '',
             ]); },
             $list
         );

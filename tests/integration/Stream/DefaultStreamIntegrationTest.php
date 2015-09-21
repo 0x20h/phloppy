@@ -11,7 +11,7 @@ class DefaultStreamIntegrationTest extends \PHPUnit_Framework_TestCase {
      */
     public function testConnectFails()
     {
-        new DefaultStream('tcp://should.not.exist:42/');
+        new DefaultStream('tcp://127.0.2.2:35394/');
     }
 
 

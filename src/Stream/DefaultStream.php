@@ -46,10 +46,11 @@ class DefaultStream implements Stream {
      */
     private function connect()
     {
-        $timeout = 3;
+        $connectTimeout = 1;
         $errstr  = '';
         $errno   = 0;
-        $stream  = @stream_socket_client($this->server, $errno, $errstr, $timeout);
+
+        $stream  = @stream_socket_client($this->server, $errno, $errstr, $connectTimeout);
 
         if (!$stream) {
             $this->log->warning('unable to connect to '. $this->server. ': '. $errstr);
@@ -80,9 +81,12 @@ class DefaultStream implements Stream {
      */
     public function readLine()
     {
-        $line = stream_get_line($this->stream, 65536, "\r\n");
+        $this->log->debug('going to read a line from the stream');
+        $line = fgets($this->stream, 8192);
 
         if (false === $line) {
+            $meta = stream_get_meta_data($this->stream);
+            $this->log->warning('fgets returned false', $meta);
             throw new StreamException('stream_get_line returned false');
         }
 
@@ -98,6 +102,7 @@ class DefaultStream implements Stream {
      */
     public function readBytes($maxlen = null)
     {
+        $this->log->debug('calling readbytes()', array('maxlen' => $maxlen));
         $out = stream_get_contents($this->stream, $maxlen);
         $this->log->debug('readBytes()', [$maxlen, $out]);
         return $out;

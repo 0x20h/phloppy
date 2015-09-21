@@ -29,9 +29,9 @@ class ProducerIntegrationTest extends AbstractIntegrationTest {
         $this->assertEquals('', $job->getId());
         $producer->addJob($queue, $job);
         $this->assertNotEquals('', $job->getId());
-        $this->assertNull($consumer->getJob($queue));
-        usleep(1.2E6);
-        $j = $consumer->getJob($queue);
+        $this->assertNull($consumer->getJob($queue, 500));
+        // now the job should be returned
+        $j = $consumer->getJob($queue, 5000);
         $this->assertInstanceOf('\Phloppy\Job', $j);
     }
 

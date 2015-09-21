@@ -1,7 +1,9 @@
 <?php
 namespace Phloppy\Client;
 
+use Phloppy\Exception\CommandException;
 use Phloppy\Job;
+use Phloppy\RespUtils;
 
 /**
  * Consumer client implementation.
@@ -16,7 +18,7 @@ class Consumer extends AbstractClient {
      */
     public function getJobs($queues, $count = 1, $timeoutMs = 200)
     {
-        return $this->mapJobs($this->send(array_merge(
+        return $this->mapJobs((array) $this->send(array_merge(
             [
                 'GETJOB',
                 'TIMEOUT',
@@ -32,6 +34,7 @@ class Consumer extends AbstractClient {
 
     /**
      * Retrieve a single job from the given queues
+     *
      * @param string|string[] $queues
      * @param int $timeoutMs How long to block client when waiting for new jobs.
      * @return Job|null A Job if found, null otherwise.

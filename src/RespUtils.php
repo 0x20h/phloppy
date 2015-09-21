@@ -38,7 +38,7 @@ class RespUtils {
     {
         $rsp = $stream->readLine();
 
-        list($type, $result) = [$rsp[0], substr($rsp, 1, strlen($rsp))];
+        list($type, $result) = [$rsp[0], trim(substr($rsp, 1, strlen($rsp)))];
 
         switch($type) {
          case '-': // ERRORS
@@ -72,5 +72,22 @@ class RespUtils {
          default:
              throw new \RuntimeException('unhandled protocol response: ' . $rsp);
         }
+    }
+
+
+    /**
+     * Map RESP responses to an associative array.
+     *
+     * @param array $response
+     * @return array
+     */
+    public static function toAssoc(array $response) {
+        $out = [];
+
+        for ($i = 1; $i < count($response); $i+=2) {
+            $out[$response[$i-1]] = $response[$i];
+        }
+
+        return $out;
     }
 }

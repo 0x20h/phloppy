@@ -16,7 +16,7 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
             $this->markTestSkipped($e->getMessage());
         }
 
-        $servers[] = 'tcp://totally.unknown.host:35594';
+        $servers[] = 'tcp://127.0.2.2:35594';
 
         for ($i = 0; $i < 100; $i++) {
             $pool = new Pool($servers);
@@ -29,11 +29,11 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @expectedException \Phloppy\Exception\ConnectException
-     * @expectedExceptionMessage unable to connect to any of [tcp://totally.unknown.host:35594]
+     * @expectedExceptionMessage unable to connect to any of [tcp://127.0.2.2:35594]
      */
     public function testConnectFails()
     {
-        $servers = ['tcp://totally.unknown.host:35594'];
+        $servers = ['tcp://127.0.2.2:35594'];
         $pool = new Pool($servers);
         $this->assertTrue($pool->isConnected());
         $pool->close();
