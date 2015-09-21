@@ -77,4 +77,24 @@ class Consumer extends AbstractClient {
         assert($job->getId() != null);
         return (int) $this->send(['FASTACK', $job->getId()]);
     }
+
+
+    /**
+     * Return the job with the given jobId.
+     *
+     * @param string $jobId
+     *
+     * @return Job[]
+     * @throws CommandException
+     */
+    public function findJob($jobId)
+    {
+        $rs = $this->send(['SHOW', (string) $jobId]);
+
+        if (!$rs) {
+            return null;
+        }
+
+        return Job::create(RespUtils::toAssoc($rs));
+    }
 }
