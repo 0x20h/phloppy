@@ -1,6 +1,6 @@
 {
     "name": "0x20h/phloppy",
-    "description": "disque client for PHP",
+    "description": "A PHP client for Disque",
     "license": "MIT",
     "authors": [
         {
