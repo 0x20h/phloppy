@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -ev
+wget https://scrutinizer-ci.com/ocular.phar -O ocular.phar --quiet
+
+if [ "${TRAVIS_PHP_VERSION}" = "5.5" ]; then
+	php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+fi
