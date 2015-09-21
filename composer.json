@@ -16,9 +16,6 @@
         "phpunit/phpunit": "~4.0",
         "monolog/monolog": "~1.0"
     },
-    "suggest": {
-        "monolog/monolog": "~1.0"
-    },
     "autoload": {
         "psr-4": {
             "Phloppy\\": "src"

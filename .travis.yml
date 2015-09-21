@@ -1,18 +1,28 @@
 language: php
 
+sudo: false
+
 php:
     - 5.5
     - 5.6
+    - 7
     - hhvm
     - nightly
 
-before_script:
-    - curl --version
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+before_install:
     - composer self-update
-    - composer install --no-interaction --prefer-source
+
+install:
+  - composer install --no-interaction --prefer-source
+
+before_script:
     - git clone https://github.com/antirez/disque.git
     - cd disque
-    - make
+    - make --silent
     - src/disque-server &
     - cd ..
 
@@ -23,6 +33,5 @@ matrix:
 script:
     - ./vendor/bin/phpunit --coverage-clover=coverage.clover
 
-after_script:
-    - wget https://scrutinizer-ci.com/ocular.phar
-    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+after_success:
+    - ./scripts/scrutinizer
