@@ -2,7 +2,6 @@
 
 namespace Phloppy\Stream;
 
-use Phloppy\Stream;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Phloppy\Exception\ConnectException;
@@ -10,7 +9,7 @@ use Phloppy\Exception\ConnectException;
 /**
  * Phloppy Node Pool.
  */
-class Pool implements Stream {
+class Pool implements StreamInterface {
     /**
      * @var array
      */
@@ -22,7 +21,7 @@ class Pool implements Stream {
     private $log;
 
     /**
-     * @var Stream
+     * @var StreamInterface
      */
     private $connected;
 
@@ -53,7 +52,7 @@ class Pool implements Stream {
 
 
     /**
-     * @return Stream
+     * @return StreamInterface
      */
     public function getActiveServer()
     {
@@ -123,8 +122,10 @@ class Pool implements Stream {
 
     /**
      * Read
+     *
      * @param $msg
-     * @return Stream the instance.
+     *
+     * @return StreamInterface the instance.
      */
     public function write($msg, $len = null)
     {

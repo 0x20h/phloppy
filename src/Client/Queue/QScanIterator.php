@@ -3,7 +3,7 @@
 namespace Phloppy\Client\Queue;
 
 use Phloppy\Client\AbstractClient;
-use Phloppy\Stream;
+use Phloppy\Stream\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -52,10 +52,10 @@ class QScanIterator extends AbstractClient implements \Iterator {
 
 
     /**
-     * @param Stream $stream
-     * @param LoggerInterface $log
+     * @param StreamInterface $stream
+     * @param LoggerInterface|null $log
      */
-    public function __construct(Stream $stream, LoggerInterface $log = null)
+    public function __construct(StreamInterface $stream, LoggerInterface $log = null)
     {
         parent::__construct($stream, $log);
     }
@@ -94,8 +94,8 @@ class QScanIterator extends AbstractClient implements \Iterator {
                 $command = array_merge($command, ['IMPORTRATE', $this->rate]);
             }
 
-            $response  = $this->send($command);
-            $this->cursor = (int) $response[0];
+            $response       = $this->send($command);
+            $this->cursor   = (int) $response[0];
             $this->elements = array_merge($this->elements, $response[1]);
         } while($this->cursor && empty($response[1]));
     }
@@ -126,7 +126,7 @@ class QScanIterator extends AbstractClient implements \Iterator {
      * Return the key of the current element
      *
      * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
+     * @return int scalar on success, or null on failure.
      */
     public function key()
     {

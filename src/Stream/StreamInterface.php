@@ -1,8 +1,8 @@
 <?php
 
-namespace Phloppy;
+namespace Phloppy\Stream;
 
-interface Stream {
+interface StreamInterface {
 
     /**
      * Close the stream.
@@ -40,7 +40,7 @@ interface Stream {
      * @param string $msg
      * @param int|null $len
      *
-     * @return Stream the instance.
+     * @return StreamInterface the instance.
      */
     public function write($msg, $len = null);
 }

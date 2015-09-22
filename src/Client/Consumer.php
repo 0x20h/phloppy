@@ -84,17 +84,17 @@ class Consumer extends AbstractClient {
      *
      * @param string $jobId
      *
-     * @return Job
+     * @return Job|null
      * @throws CommandException
      */
     public function findJob($jobId)
     {
-        $rs = $this->send(['SHOW', (string) $jobId]);
+        $result = $this->send(['SHOW', (string) $jobId]);
 
-        if (!$rs) {
+        if (!$result) {
             return null;
         }
 
-        return Job::create(RespUtils::toAssoc($rs));
+        return Job::create(RespUtils::toAssoc($result));
     }
 }

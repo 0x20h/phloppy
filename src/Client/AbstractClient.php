@@ -3,7 +3,7 @@ namespace Phloppy\Client;
 
 use Phloppy\Job;
 use Phloppy\RespUtils;
-use Phloppy\Stream;
+use Phloppy\Stream\StreamInterface;
 use Phloppy\Stream\StreamException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -16,7 +16,7 @@ use Phloppy\Exception\CommandException;
 abstract class AbstractClient {
 
     /**
-     * @var Stream
+     * @var StreamInterface
      */
     protected $stream;
 
@@ -26,10 +26,10 @@ abstract class AbstractClient {
     protected $log;
 
     /**
-     * @param Stream $stream
+     * @param StreamInterface $stream
      * @param LoggerInterface|null $log Logger instance.
      */
-    public function __construct(Stream $stream, LoggerInterface $log = null)
+    public function __construct(StreamInterface $stream, LoggerInterface $log = null)
     {
         if (!$log) {
             $log = new NullLogger();

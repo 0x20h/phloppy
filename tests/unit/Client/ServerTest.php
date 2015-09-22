@@ -6,7 +6,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
 
     public function testAuthOk()
     {
-        $mock = $this->getMock('\Phloppy\Stream');
+        $mock = $this->getMock('\Phloppy\Stream\StreamInterface');
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+OK');
 
@@ -17,7 +17,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
 
     public function testPingPong()
     {
-        $mock = $this->getMock('\Phloppy\Stream');
+        $mock = $this->getMock('\Phloppy\Stream\StreamInterface');
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+PONG');
 

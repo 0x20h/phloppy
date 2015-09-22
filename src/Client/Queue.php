@@ -18,7 +18,7 @@ class Queue extends AbstractClient {
      */
     public function len($queue)
     {
-        return $this->send(['QLEN', $queue]);
+        return (int) $this->send(['QLEN', $queue]);
     }
 
 
@@ -45,7 +45,8 @@ class Queue extends AbstractClient {
      * @param int $min Filter queues with at least min elements.
      * @param int $max Filter queues with at most max elements.
      * @param int $rate Filter queues by job import rate.
-     * @return \Iterator
+     *
+     * @return QScanIterator
      */
     public function scan($count = 50, $min = 0, $max = 0, $rate = 0)
     {

@@ -2,12 +2,11 @@
 
 namespace Phloppy\Stream;
 
-use Phloppy\Stream;
 use Phloppy\Exception\ConnectException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class DefaultStream implements Stream {
+class DefaultStream implements StreamInterface {
 
     /**
      * Server information.
@@ -113,7 +112,8 @@ class DefaultStream implements Stream {
      *
      * @param string $msg
      * @param int|null $len
-     * @return DefaultStream This instance.
+     *
+     * @return DefaultStream this instance.
      */
     public function write($msg, $len = null)
     {

@@ -40,17 +40,20 @@ class Server extends AbstractClient {
      */
     public function info()
     {
-        $rsp = $this->send(['INFO']);
-        $info = [];
-
+        $rsp      = $this->send(['INFO']);
+        $info     = [];
         $sections = preg_split('/^#/m', $rsp);
+
         foreach ($sections as $section) {
             $lines  = explode("\r\n", trim($section));
             $header = trim($lines[0]);
+
             array_shift($lines);
+
             $lines = array_reduce($lines, function($c, $e) {
                 list($k,$v) = explode(':', $e);
-                $c[$k] = $v;
+                $c[$k]      = $v;
+
                 return $c;
             }, []);
 

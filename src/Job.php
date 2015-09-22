@@ -177,7 +177,6 @@ class Job {
             $job->setTtl($args['ttl']);
         }
 
-        // @TODO add other variables
         return $job;
     }
 

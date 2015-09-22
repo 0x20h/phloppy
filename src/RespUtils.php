@@ -3,6 +3,7 @@
 namespace Phloppy;
 
 use Phloppy\Exception\CommandException;
+use Phloppy\Stream\StreamInterface;
 
 /**
  * Redis protocol implementation.
@@ -28,13 +29,14 @@ class RespUtils {
 
 
     /**
-     * @param Stream $stream
+     * @param StreamInterface $stream
+     *
      * @return array|int|null|string
      *
      * @throws CommandException
      * @throws \RuntimeException
      */
-    public static function deserialize(Stream $stream)
+    public static function deserialize(StreamInterface $stream)
     {
         $rsp = $stream->readLine();
 
@@ -42,7 +44,6 @@ class RespUtils {
 
         switch($type) {
          case '-': // ERRORS
-             // @TODO take error prefix into account
              throw new CommandException($result);
 
          case '+': // SIMPLE STRINGS
@@ -83,8 +84,9 @@ class RespUtils {
      */
     public static function toAssoc(array $response) {
         $out = [];
+        $count = count($response);
 
-        for ($i = 1; $i < count($response); $i+=2) {
+        for ($i = 1; $i < $count; $i+=2) {
             $out[$response[$i-1]] = $response[$i];
         }
 

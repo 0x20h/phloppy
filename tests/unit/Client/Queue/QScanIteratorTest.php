@@ -8,35 +8,35 @@ class QScanIteratorTest extends \PHPUnit_Framework_TestCase {
 
     public function testCount()
     {
-        $client = new QScanIterator($this->getMock('\Phloppy\Stream'));
+        $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setCount(100));
         $this->assertSame(100, $client->getCount());
     }
 
     public function testRate()
     {
-        $client = new QScanIterator($this->getMock('\Phloppy\Stream'));
+        $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setRate(100));
         $this->assertSame(100, $client->getRate());
     }
 
     public function testMin()
     {
-        $client = new QScanIterator($this->getMock('\Phloppy\Stream'));
+        $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setMin(100));
         $this->assertSame(100, $client->getMin());
     }
 
     public function testMax()
     {
-        $client = new QScanIterator($this->getMock('\Phloppy\Stream'));
+        $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setMax(100));
         $this->assertSame(100, $client->getMax());
     }
 
     public function testScan()
     {
-        $mock = $this->getMock('\Phloppy\Stream');
+        $mock = $this->getMock('\Phloppy\Stream\StreamInterface');
         $mock->expects($this->once())
             ->method('write')
             ->with("*5\r\n$5\r\nQSCAN\r\n$1\r\n0\r\n$8\r\nBUSYLOOP\r\n$10\r\nIMPORTRATE\r\n$2\r\n42\r\n")
@@ -59,7 +59,7 @@ class QScanIteratorTest extends \PHPUnit_Framework_TestCase {
     public function testScanBusyloop()
     {
         $mock = $this->getMockBuilder('\Phloppy\Client\Queue\QScanIterator')
-            ->setConstructorArgs([$this->getMock('\Phloppy\Stream')])
+            ->setConstructorArgs([$this->getMock('\Phloppy\Stream\StreamInterface')])
             ->setMethods(['send'])
             ->getMock();
 
