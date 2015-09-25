@@ -2,7 +2,7 @@
 namespace Phloppy\Client;
 
 use Phloppy\Exception\CommandException;
-use Phloppy\Node;
+use Phloppy\NodeInfo;
 
 /**
  * Disque server commands.
@@ -65,7 +65,7 @@ class Server extends AbstractClient {
 
 
     /**
-     * @return Node[]
+     * @return NodeInfo[]
      */
     public function hello()
     {
@@ -80,7 +80,7 @@ class Server extends AbstractClient {
 
                 foreach($rsp as $node) {
                     $server  = $protocol .'://'. $node[1] .':'. $node[2];
-                    $nodes[] = new Node($node[0], $server, $node[3]);
+                    $nodes[] = new NodeInfo($node[0], $server, $node[3]);
                 }
 
                 break;
