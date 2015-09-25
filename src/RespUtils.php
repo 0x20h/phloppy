@@ -83,7 +83,7 @@ class RespUtils {
      * @return array
      */
     public static function toAssoc(array $response) {
-        $out = [];
+        $out   = [];
         $count = count($response);
 
         for ($i = 1; $i < $count; $i+=2) {

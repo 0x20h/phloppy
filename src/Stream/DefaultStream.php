@@ -30,7 +30,7 @@ class DefaultStream implements StreamInterface {
             $log = new NullLogger();
         }
 
-        $this->log    = $log;
+        $this->log       = $log;
         $this->streamUrl = $streamUrl;
 
         $this->connect();
@@ -46,10 +46,9 @@ class DefaultStream implements StreamInterface {
     private function connect()
     {
         $connectTimeout = 1;
-        $errstr  = '';
-        $errno   = 0;
-
-        $stream  = @stream_socket_client($this->streamUrl, $errno, $errstr, $connectTimeout);
+        $errstr         = '';
+        $errno          = 0;
+        $stream         = @stream_socket_client($this->streamUrl, $errno, $errstr, $connectTimeout);
 
         if (!$stream) {
             $this->log->warning('unable to connect to '. $this->streamUrl. ': '. $errstr);
