@@ -82,7 +82,7 @@ class Pool implements StreamInterface {
     private function connect() {
         $nodes = $this->streamUrls;
 
-        while(count($nodes)) {
+        while (count($nodes)) {
           // pick random server
           $idx = rand(0, count($nodes) - 1);
 
@@ -96,7 +96,7 @@ class Pool implements StreamInterface {
           array_splice($nodes, $idx, 1);
         }
 
-        throw new ConnectException('unable to connect to any of [' . implode(',', $this->streamUrls) .']');
+        throw new ConnectException('unable to connect to any of ['.implode(',', $this->streamUrls).']');
     }
 
 

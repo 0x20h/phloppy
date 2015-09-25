@@ -97,7 +97,7 @@ class QScanIterator extends AbstractClient implements \Iterator {
             $response       = $this->send($command);
             $this->cursor   = (int) $response[0];
             $this->elements = array_merge($this->elements, $response[1]);
-        } while($this->cursor && empty($response[1]));
+        } while ($this->cursor && empty($response[1]));
     }
 
 

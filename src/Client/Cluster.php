@@ -36,7 +36,7 @@ class Cluster extends AbstractClient {
                 $response = $this->send(['CLUSTER', 'MEET', $parts['host'], (int) $parts['port']]);
                 $this->log->debug('CLUSTER MEET', ['host' => $url, 'response' => $response]);
                 return 'OK' === $response;
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 $this->log->error($e->getMessage(), array('url' => $url, 'exception' => $e));
                 return false;
             }

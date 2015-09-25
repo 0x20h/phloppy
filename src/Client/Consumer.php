@@ -42,7 +42,7 @@ class Consumer extends AbstractClient {
     public function getJob($queues, $timeoutMs = 200) {
         $jobs = $this->getJobs($queues, 1, $timeoutMs);
 
-        if(empty($jobs)) {
+        if (empty($jobs)) {
             return null;
         }
 
