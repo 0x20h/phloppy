@@ -1,26 +1,36 @@
 <?php
 namespace Phloppy\Client;
 
-use Phloppy\Exception\CommandException;
-use Phloppy\Node;
+use Phloppy\Stream\StreamException;
 
 /**
  * Disque cluster commands.
+ *
+ * @see http://redis.io/commands#cluster
  */
 class Cluster extends AbstractClient {
 
+
     /**
-     * @return Node[]
+     * Introduce the provided nodes to the connected Disque instance.
+     *
+     * @param string[] $streamUrls
+     *
+     * @return string[]
+     * @see http://redis.io/commands/cluster-meet
      */
-    public function meet(array $nodes)
+    public function meet(array $streamUrls)
     {
+        return array_filter($streamUrls, function($url) {
+            $parts = parse_url($url);
 
-        foreach ($nodes as $node) {
-            list($host, $port) = explode(':', $node);
-            $rsp               = $this->send(['CLUSTER', 'MEET', $host, (int) $port]);
-            var_dump($rsp);
-        }
-
-        return $nodes;
+            try {
+                $response = $this->send(['CLUSTER', 'MEET', $parts['host'], (int) $parts['port']]);
+                $this->log->debug('CLUSTER MEET', ['host' => $url, 'response' => $response]);
+                return 'OK' === $response;
+            } catch(StreamException $e) {
+                return false;
+            }
+        });
     }
 }

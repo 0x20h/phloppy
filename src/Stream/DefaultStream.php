@@ -9,11 +9,11 @@ use Psr\Log\NullLogger;
 class DefaultStream implements StreamInterface {
 
     /**
-     * Server information.
+     * The remote socket url.
      *
      * @var string
      */
-    private $server;
+    private $streamUrl;
 
     /**
      * @var LoggerInterface
@@ -25,13 +25,13 @@ class DefaultStream implements StreamInterface {
      */
     private $stream;
 
-    public function __construct($server, LoggerInterface $log = null) {
+    public function __construct($streamUrl, LoggerInterface $log = null) {
         if (!$log) {
             $log = new NullLogger();
         }
 
         $this->log    = $log;
-        $this->server = $server;
+        $this->streamUrl = $streamUrl;
 
         $this->connect();
     }
@@ -49,14 +49,14 @@ class DefaultStream implements StreamInterface {
         $errstr  = '';
         $errno   = 0;
 
-        $stream  = @stream_socket_client($this->server, $errno, $errstr, $connectTimeout);
+        $stream  = @stream_socket_client($this->streamUrl, $errno, $errstr, $connectTimeout);
 
         if (!$stream) {
-            $this->log->warning('unable to connect to '. $this->server. ': '. $errstr);
-            throw new ConnectException('Unable to connect to server '. $this->server .'. '. $errstr, $errno);
+            $this->log->warning('unable to connect to '. $this->streamUrl. ': '. $errstr);
+            throw new ConnectException('Unable to connect to resource '. $this->streamUrl .'. '. $errstr, $errno);
         }
 
-        $this->log->info('connected to ' . $this->server);
+        $this->log->info('connected to ' . $this->streamUrl);
         $this->stream = $stream;
         return true;
     }
@@ -64,10 +64,10 @@ class DefaultStream implements StreamInterface {
 
     public function close()
     {
-        $this->log->info('closing connection: '. $this->server);
+        $this->log->info('closing connection: '. $this->streamUrl);
         stream_socket_shutdown($this->stream, STREAM_SHUT_RDWR);
         $this->stream = null;
-        $this->log->info('connection closed: '. $this->server);
+        $this->log->info('connection closed: '. $this->streamUrl);
         return true;
     }
 
@@ -132,5 +132,16 @@ class DefaultStream implements StreamInterface {
     public function isConnected()
     {
         return is_resource($this->stream);
+    }
+
+
+    /**
+     * return the internal stream url.
+     *
+     * @return string
+     */
+    public function getStreamUrl()
+    {
+        return $this->streamUrl;
     }
 }

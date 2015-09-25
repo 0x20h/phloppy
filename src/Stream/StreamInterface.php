@@ -43,4 +43,11 @@ interface StreamInterface {
      * @return StreamInterface the instance.
      */
     public function write($msg, $len = null);
+
+    /**
+     * return the internal stream url.
+     *
+     * @return string
+     */
+    public function getStreamUrl();
 }
