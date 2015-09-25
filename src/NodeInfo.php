@@ -2,7 +2,7 @@
 
 namespace Phloppy;
 
-class Node {
+class NodeInfo {
 
     /**
      * @var string

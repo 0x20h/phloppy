@@ -4,13 +4,14 @@ namespace Phloppy\Client;
 
 use Phloppy\Exception\ConnectException;
 use Phloppy\Stream\Pool;
+use Phloppy\Stream\StreamInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @var \Phloppy\Stream\Pool
+     * @var StreamInterface
      */
     protected $stream;
 

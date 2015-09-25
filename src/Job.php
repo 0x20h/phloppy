@@ -185,8 +185,9 @@ class Job {
      *
      * @return string|null The node id of the node where the job was published
      */
-    public function getOriginNode() {
-       return $this->id ? substr($this->id, 3, 11) : null;
+    public function getOriginNode()
+    {
+        return $this->id ? substr($this->id, 3, 11) : null;
     }
 
     public function __toString()

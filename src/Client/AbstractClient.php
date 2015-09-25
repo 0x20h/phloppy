@@ -56,7 +56,7 @@ abstract class AbstractClient {
             $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
             $this->log->debug('response', [$response]);
             return $response;
-        } catch(StreamException $e) {
+        } catch (StreamException $e) {
             $this->log->warning($e->getMessage());
         }
 

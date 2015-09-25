@@ -2,7 +2,7 @@
 namespace Phloppy\Client;
 
 use Phloppy\Exception\CommandException;
-use Phloppy\Node;
+use Phloppy\NodeInfo;
 
 /**
  * Disque server commands.
@@ -51,7 +51,7 @@ class Server extends AbstractClient {
             array_shift($lines);
 
             $lines = array_reduce($lines, function($c, $e) {
-                list($k,$v) = explode(':', $e);
+                list($k, $v) = explode(':', $e);
                 $c[$k]      = $v;
 
                 return $c;
@@ -65,7 +65,7 @@ class Server extends AbstractClient {
 
 
     /**
-     * @return Node[]
+     * @return NodeInfo[]
      */
     public function hello()
     {
@@ -73,14 +73,14 @@ class Server extends AbstractClient {
         $rsp     = $this->send(['HELLO']);
         $version = array_shift($rsp);
 
-        switch($version) {
+        switch ($version) {
             case 1:
                 /* $active = */ array_shift($rsp);
                 $protocol = 'tcp';
 
-                foreach($rsp as $node) {
-                    $server  = $protocol .'://'. $node[1] .':'. $node[2];
-                    $nodes[] = new Node($node[0], $server, $node[3]);
+                foreach ($rsp as $node) {
+                    $server  = $protocol.'://'.$node[1].':'.$node[2];
+                    $nodes[] = new NodeInfo($node[0], $server, $node[3]);
                 }
 
                 break;

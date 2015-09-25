@@ -18,7 +18,7 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
 
         $servers[] = 'tcp://127.0.2.2:35594';
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $pool = new Pool($servers);
 
             // should always connect to one of the present servers and never fail
@@ -67,7 +67,7 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
             $this->markTestSkipped($e->getMessage());
         }
 
-        $this->assertSame($servers, $pool->getServers());
+        $this->assertSame($servers, $pool->getStreamUrls());
     }
 
 }

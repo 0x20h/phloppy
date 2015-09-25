@@ -13,7 +13,7 @@ class Pool implements StreamInterface {
     /**
      * @var array
      */
-    private $servers;
+    private $streamUrls;
 
     /**
      * @var LoggerInterface
@@ -26,13 +26,14 @@ class Pool implements StreamInterface {
     private $connected;
 
     /**
-     * @param array $servers
+     * @param array $streamUrls
      * @param LoggerInterface|null $log
+     *
      * @throws ConnectException
      */
-    public function __construct(array $servers = array(), LoggerInterface $log = null)
+    public function __construct(array $streamUrls = array(), LoggerInterface $log = null)
     {
-        $this->servers = $servers;
+        $this->streamUrls = $streamUrls;
 
         if (!$log) {
             $log = new NullLogger();
@@ -46,8 +47,8 @@ class Pool implements StreamInterface {
     /**
      * @return array
      */
-    public function getServers() {
-        return $this->servers;
+    public function getStreamUrls() {
+        return $this->streamUrls;
     }
 
 
@@ -79,9 +80,9 @@ class Pool implements StreamInterface {
      * @throws ConnectException
      */
     private function connect() {
-        $nodes = $this->servers;
+        $nodes = $this->streamUrls;
 
-        while(count($nodes)) {
+        while (count($nodes)) {
           // pick random server
           $idx = rand(0, count($nodes) - 1);
 
@@ -95,7 +96,7 @@ class Pool implements StreamInterface {
           array_splice($nodes, $idx, 1);
         }
 
-        throw new ConnectException('unable to connect to any of [' . implode(',', $this->servers) .']');
+        throw new ConnectException('unable to connect to any of ['.implode(',', $this->streamUrls).']');
     }
 
 
@@ -150,5 +151,16 @@ class Pool implements StreamInterface {
     public function isConnected()
     {
         return $this->connected->isConnected();
+    }
+
+
+    /**
+     * return the internal stream url.
+     *
+     * @return string
+     */
+    public function getStreamUrl()
+    {
+        return $this->connected->getStreamUrl();
     }
 }

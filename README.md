@@ -16,16 +16,29 @@ composer require 0x20h/phloppy:~0.0
 
 ## Usage
 
+Disque's API is implemented in different `\Phloppy\Client` implementations that
+reflect their specific use case. All clients get injected a `StreamInterface`
+that holds the link to the connected Disque node. The different Clients are:
+
+### Setup a stream
+
+First thing to do is to connect to a Disque server. You can use the
+`Phloppy\Stream\Pool` class to connect to a random instance in the cluster.
+
+``` php
+$pool = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+```
+
+Then, inject the `$pool` to a client implementation.
+
 ### Producer
 
 ``` php
-$logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
-$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-$producer = new Phloppy\Producer($pool, $logger);
+$producer = new Producer($pool);
 $job = $producer->addJob('test', Phloppy\Job::create(['body' => 42]));
 ```
 
-Commands:
+Further Commands:
 
 - `addJob(queueName, job, [maxlen = 0], [async = false])`
 - `setReplicationTimeout(msecs)`
@@ -34,15 +47,13 @@ Commands:
 ### Consumer
 
 ``` php
-$logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
-$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-$consumer = new Phloppy\Consumer($pool, $logger);
+$consumer = new Consumer($pool);
 $job = $consumer->getJob('test');
 // do some work
 $consumer->ack($job);
 ```
 
-Commands:
+Further commands:
 
 - `getJob(queueNames)`
 - `getJobs(queueNames, numberOfJobs)`
@@ -53,9 +64,7 @@ Commands:
 ### Queue
 
 ``` php
-$logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
-$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-$queue = new Phloppy\Queue($pool, $logger);
+$queue = new Queue($pool);
 // print out the current queue len on the connected node
 echo $queue->len('test');
 // get the latest job out of 'test' without removing it
@@ -66,13 +75,12 @@ Commands:
 
 - `len(queueName)`
 - `peek(queueName)`
+- `scan(count,min,max,rate)`
 
 ### Server
 
 ``` php
-$logger = new Monolog\Logger(new Monolog\Handler\StreamHandler('php://stdout'));
-$pool = new Phloppy\Stream\Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-$consumer = new Phloppy\Client($pool, $logger);
+$consumer = new Server($pool);
 $nodes = $consumer->hello();
 ```
 
@@ -82,6 +90,17 @@ Commands:
 - `info()`
 - `ping()`
 - `auth(password)`
+
+### Cluster
+
+``` php
+$cluster = new Cluster($pool);
+$cluster->meet($pool->getStreamUrls());
+```
+
+Commands:
+
+- `meet($urls)`
 
 # License
 
