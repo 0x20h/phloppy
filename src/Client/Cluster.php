@@ -21,7 +21,13 @@ class Cluster extends AbstractClient {
      */
     public function meet(array $streamUrls)
     {
-        return array_filter($streamUrls, function($url) {
+        $current = $this->stream->getStreamUrl();
+
+        return array_filter($streamUrls, function($url) use ($current) {
+            if ($url === $current) {
+                return true;
+            }
+
             $parts = parse_url($url);
 
             try {
