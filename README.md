@@ -18,7 +18,7 @@ composer require 0x20h/phloppy:~0.0
 
 Disque's API is implemented in different `\Phloppy\Client` implementations that
 reflect their specific use case. All clients get injected a `StreamInterface`
-that holds the link to the connected Disque node. The different Clients are:
+that holds the link to the connected Disque node.
 
 ### Setup a stream
 
