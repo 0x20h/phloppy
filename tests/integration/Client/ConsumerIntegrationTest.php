@@ -54,9 +54,9 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
         $consumer = new Consumer($this->stream);
         $producer = new Producer($this->stream);
         $job      = $producer->addJob($queue, Job::create(['body' => __METHOD__]));
-        $findJob  = $consumer->findJob($job->getId());
+        $findJob  = $consumer->show($job->getId());
         $this->assertEquals($findJob->getBody(), $job->getBody());
-        $findJob  = $consumer->findJob('DIf7198058ffab72d8692e5ece37fb0cfeecabd940023cSQ');
+        $findJob  = $consumer->show('DIf7198058ffab72d8692e5ece37fb0cfeecabd940023cSQ');
         $this->assertNull($findJob);
     }
 
@@ -69,6 +69,6 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
     {
 
         $consumer = new Consumer($this->stream);
-        $consumer->findJob('foo');
+        $consumer->show('foo');
     }
 }

@@ -87,7 +87,7 @@ class Consumer extends AbstractClient {
      * @return Job|null
      * @throws CommandException
      */
-    public function findJob($jobId)
+    public function show($jobId)
     {
         $result = $this->send(['SHOW', (string) $jobId]);
 
