@@ -80,6 +80,8 @@ Commands:
 - `len(queueName)`
 - `peek(queueName)`
 - `scan(count,min,max,rate)`
+- `enqueue(jobIds)`
+- `dequeue(jobIds)`
 
 ### Node
 
