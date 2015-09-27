@@ -91,7 +91,7 @@ class DefaultStream implements StreamInterface
         if (false === $line) {
             $meta = stream_get_meta_data($this->stream);
             $this->log->warning('fgets returned false', $meta);
-            throw new StreamException('stream_get_line returned false');
+            throw new StreamException(StreamException::OP_READ, 'stream_get_line returned false');
         }
 
         $this->log->debug('readLine()', [$line]);
@@ -105,12 +105,19 @@ class DefaultStream implements StreamInterface
      * @param int|null $maxlen
      *
      * @return string
+     * @throws StreamException If an error occurs while reading from the stream.
      */
     public function readBytes($maxlen = null)
     {
         $this->log->debug('calling readbytes()', array('maxlen' => $maxlen));
         $out = stream_get_contents($this->stream, $maxlen);
         $this->log->debug('readBytes()', [$maxlen, $out]);
+
+        if (false === $out) {
+            $meta = stream_get_meta_data($this->stream);
+            $this->log->warning('stream_get_contents returned false', $meta);
+            throw new StreamException(StreamException::OP_READ, 'stream_get_contents returned false');
+        }
 
         return $out;
     }
@@ -123,12 +130,20 @@ class DefaultStream implements StreamInterface
      * @param int|null $len
      *
      * @return DefaultStream this instance.
+     * @throws StreamException
      */
     public function write($msg, $len = null)
     {
+        if (!$len) {
+            $len = strlen($msg);
+        }
+
         $bytes = fwrite($this->stream, $msg);
         $this->log->debug('write()', ['written' => $bytes, 'len' => $len, 'msg' => $msg]);
-        assert($bytes == $len ? $len : strlen($msg));
+
+        if ($bytes !== $len) {
+            throw new StreamException(StreamException::OP_WRITE, 'unable to write to stream');
+        }
 
         return $this;
     }

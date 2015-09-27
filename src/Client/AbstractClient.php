@@ -11,7 +11,7 @@ use Psr\Log\NullLogger;
 use Phloppy\Exception\CommandException;
 
 /**
- * General disque Client.
+ * Abstract Disque Client.
  */
 abstract class AbstractClient {
 
@@ -47,20 +47,14 @@ abstract class AbstractClient {
      * @return array|int|null|string
      *
      * @throws CommandException
+     * @throws StreamException
      */
     protected function send(array $args = [])
     {
         $this->log->debug('send()ing command', $args);
-
-        try {
-            $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
-            $this->log->debug('response', [$response]);
-            return $response;
-        } catch (StreamException $e) {
-            $this->log->warning($e->getMessage());
-        }
-
-        return null;
+        $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
+        $this->log->debug('response', [$response]);
+        return $response;
     }
 
 
