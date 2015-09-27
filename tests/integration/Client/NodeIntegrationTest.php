@@ -3,12 +3,13 @@
 namespace Phloppy\Client;
 
 use Phloppy\Exception\CommandException;
+use Phloppy\Job;
 
-class ServerIntegrationTest extends AbstractIntegrationTest {
+class NodeIntegrationTest extends AbstractIntegrationTest {
 
     public function testAuth()
     {
-        $server = new Server($this->stream);
+        $server = new Node($this->stream);
 
         try {
             $ok = $server->auth('test');
@@ -20,8 +21,8 @@ class ServerIntegrationTest extends AbstractIntegrationTest {
 
     public function testHello()
     {
-        $server = new Server($this->stream);
-        $nodes = $server->hello();
+        $server = new Node($this->stream);
+        $nodes  = $server->hello();
 
         $this->assertNotEmpty($nodes);
         $allNodes = [];
@@ -39,15 +40,16 @@ class ServerIntegrationTest extends AbstractIntegrationTest {
 
     public function testPing()
     {
-        $server = new Server($this->stream);
+        $server = new Node($this->stream);
         $this->assertTrue($server->ping());
     }
 
 
     public function testInfo()
     {
-        $server = new Server($this->stream);
-        $info = $server->info();
+        $server = new Node($this->stream);
+        $info   = $server->info();
+
         $this->assertArrayHasKey('Server', $info);
         $this->assertArrayHasKey('Clients', $info);
         $this->assertArrayHasKey('Memory', $info);
@@ -57,4 +59,40 @@ class ServerIntegrationTest extends AbstractIntegrationTest {
         $this->assertArrayHasKey('Stats', $info);
     }
 
+    public function testDel()
+    {
+        $node = new Node($this->stream);
+        $this->assertEquals(0, $node->del(['foo']));
+    }
+
+    public function testJScan()
+    {
+        $p     = new Producer($this->stream);
+        $queue = uniqid('jscan_');
+        $n     = rand(0, 100);
+
+        for ($i = 0; $i < $n; $i++) {
+            $p->addJob($queue, Job::create(['body' => '23']));
+        }
+
+        $node  = new Node($this->stream, $this->log);
+        $it    = $node->jscan(5, [$queue], [Job::STATE_QUEUED]);
+        $busy  = $node->jscan(0, [$queue], [Job::STATE_QUEUED]);
+
+        $iterCount = $busyCount = 0;
+        $jobs   = [];
+
+        foreach($it as $k => $job) {
+            $iterCount++;
+            $jobs[] = $job;
+        }
+
+        foreach ($busy as $k => $job) {
+            $busyCount++;
+        }
+
+        // cleanup
+        $this->assertEquals($n, $node->del($jobs));
+        $this->assertEquals($n, $iterCount);
+    }
 }

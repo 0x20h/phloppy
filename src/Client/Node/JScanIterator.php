@@ -1,17 +1,20 @@
 <?php
 
-namespace Phloppy\Client\Queue;
+namespace Phloppy\Client\Node;
 
 use Phloppy\Client\AbstractClient;
 use Phloppy\Stream\StreamInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * QSCAN Iterator.
+ * JSCAN Iterator.
  *
- * For the command options see https://github.com/antirez/disque
+ * @see https://github.com/antirez/disque#jscan-cursor-count-count-busyloop-queue-queue-state-state1-state-state2--state-staten-reply-allid
  */
-class QScanIterator extends AbstractClient implements \Iterator {
+class JScanIterator extends AbstractClient implements \Iterator {
+
+    const FORMAT_ID  = 'id';
+    const FORMAT_ALL = 'all';
 
     /**
      * @var int Current disque cursor.
@@ -36,19 +39,19 @@ class QScanIterator extends AbstractClient implements \Iterator {
     private $count = 100;
 
     /**
-     * @var int
+     * @var string[]
      */
-    private $min = 0;
+    private $queues = [];
 
     /**
-     * @var int
+     * @var string[]
      */
-    private $max = 0;
+    private $states = [];
 
     /**
-     * @var int
+     * @var string
      */
-    private $rate = 0;
+    private $format = self::FORMAT_ID;
 
 
     /**
@@ -67,13 +70,13 @@ class QScanIterator extends AbstractClient implements \Iterator {
             $this->cursor = 0;
         }
 
-        // Iterating here because the response of the qscan
+        // Iterating here because the response of the jscan
         // iteration might be empty due to filter restrictions
         // (disque internally limits the number of dictScan iterations).
         // Thus we rescan if we didn't get any elements and the cursor
         // is still valid.
         do {
-            $command = ['QSCAN', $this->cursor];
+            $command = ['JSCAN', $this->cursor];
 
             if ($this->count) {
                 $command = array_merge($command, ['COUNT', $this->count]);
@@ -81,19 +84,20 @@ class QScanIterator extends AbstractClient implements \Iterator {
                 $command[] = 'BUSYLOOP';
             }
 
-            if ($this->min) {
-                $command = array_merge($command, ['MINLEN', $this->min]);
+            if ($this->queues) {
+                $command = array_reduce($this->queues, function($p, $c) {
+                    return array_merge($p, ['QUEUE', $c]);
+                }, $command);
             }
 
 
-            if ($this->max) {
-                $command = array_merge($command, ['MAXLEN', $this->max]);
+            if ($this->states) {
+                $command = array_reduce($this->states, function($p, $c) {
+                    return array_merge($p, ['STATE', $c]);
+                }, $command);
             }
 
-            if ($this->rate) {
-                $command = array_merge($command, ['IMPORTRATE', $this->rate]);
-            }
-
+            $command        = array_merge($command, ['REPLY', $this->format]);
             $response       = $this->send($command);
             $this->cursor   = (int) $response[0];
             $this->elements = array_merge($this->elements, $response[1]);
@@ -162,45 +166,36 @@ class QScanIterator extends AbstractClient implements \Iterator {
 
     /**
      * @param int $count
-     * @return QScanIterator
      */
     public function setCount($count)
     {
         $this->count = (int) $count;
-        return $this;
     }
 
 
     /**
-     * Set the minimum queue size.
-     *
-     * @param int $min min >= 0
-     * @return QScanIterator
+     * @param \string[] $queues
      */
-    public function setMin($min)
+    public function setQueues($queues)
     {
-        $this->min = (int) $min;
-        return $this;
-    }
-
-    /**
-     * @param int $max
-     * @return QScanIterator
-     */
-    public function setMax($max)
-    {
-        $this->max = (int) $max;
-        return $this;
+        $this->queues = $queues;
     }
 
 
     /**
-     * @param int $rate
-     * @return QScanIterator
+     * @param \string[] $states
      */
-    public function setRate($rate)
+    public function setStates($states)
     {
-        $this->rate = $rate;
-        return $this;
+        $this->states = $states;
+    }
+
+
+    /**
+     * @param string $format
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
     }
 }

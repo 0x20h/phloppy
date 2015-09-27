@@ -13,7 +13,7 @@ class Pool implements StreamInterface {
     /**
      * @var array
      */
-    private $streamUrls;
+    private $nodeUrls;
 
     /**
      * @var LoggerInterface
@@ -26,14 +26,14 @@ class Pool implements StreamInterface {
     private $connected;
 
     /**
-     * @param array $streamUrls
+     * @param array $nodeUrls
      * @param LoggerInterface|null $log
      *
      * @throws ConnectException
      */
-    public function __construct(array $streamUrls = array(), LoggerInterface $log = null)
+    public function __construct(array $nodeUrls = array(), LoggerInterface $log = null)
     {
-        $this->streamUrls = $streamUrls;
+        $this->nodeUrls = $nodeUrls;
 
         if (!$log) {
             $log = new NullLogger();
@@ -47,15 +47,15 @@ class Pool implements StreamInterface {
     /**
      * @return array
      */
-    public function getStreamUrls() {
-        return $this->streamUrls;
+    public function getNodeUrls() {
+        return $this->nodeUrls;
     }
 
 
     /**
      * @return StreamInterface
      */
-    public function getActiveServer()
+    public function getActiveNode()
     {
         return $this->connected;
     }
@@ -80,7 +80,7 @@ class Pool implements StreamInterface {
      * @throws ConnectException
      */
     private function connect() {
-        $nodes = $this->streamUrls;
+        $nodes = $this->nodeUrls;
 
         while (count($nodes)) {
           // pick random server
@@ -96,7 +96,7 @@ class Pool implements StreamInterface {
           array_splice($nodes, $idx, 1);
         }
 
-        throw new ConnectException('unable to connect to any of ['.implode(',', $this->streamUrls).']');
+        throw new ConnectException('unable to connect to any of ['.implode(',', $this->nodeUrls).']');
     }
 
 
@@ -159,8 +159,8 @@ class Pool implements StreamInterface {
      *
      * @return string
      */
-    public function getStreamUrl()
+    public function getNodeUrl()
     {
-        return $this->connected->getStreamUrl();
+        return $this->connected->getNodeUrl();
     }
 }

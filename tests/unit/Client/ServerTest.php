@@ -10,7 +10,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+OK');
 
-        $client = new Server($mock);
+        $client = new Node($mock);
         $this->assertTrue($client->auth('test'));
     }
 
@@ -21,7 +21,7 @@ class ServerTest extends \PHPUnit_Framework_TestCase {
         $mock->expects($this->once())->method('write')->willReturn($mock);
         $mock->expects($this->once())->method('readLine')->willReturn('+PONG');
 
-        $client = new Server($mock);
+        $client = new Node($mock);
         $this->assertTrue($client->ping());
     }
 }

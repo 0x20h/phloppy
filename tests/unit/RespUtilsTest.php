@@ -2,7 +2,7 @@
 
 namespace Phloppy;
 
-class RespTest extends \PHPUnit_Framework_TestCase {
+class RespUtilsTest extends \PHPUnit_Framework_TestCase {
 
     public function testReadString()
     {

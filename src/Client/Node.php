@@ -1,16 +1,18 @@
 <?php
 namespace Phloppy\Client;
 
+use Iterator;
+use Phloppy\Client\Node\JScanIterator;
 use Phloppy\Exception\CommandException;
 use Phloppy\NodeInfo;
 
 /**
- * Disque server commands.
+ * Disque commands for local nodes.
  */
-class Server extends AbstractClient {
+class Node extends AbstractClient {
 
     /**
-     * Authenticate against disque.
+     * Authenticate against a Disque node.
      *
      * @param $password
      * @return boolean true if authenticated. False otherwise.
@@ -52,7 +54,7 @@ class Server extends AbstractClient {
 
             $lines = array_reduce($lines, function($c, $e) {
                 list($k, $v) = explode(':', $e);
-                $c[$k]      = $v;
+                $c[$k]       = $v;
 
                 return $c;
             }, []);
@@ -87,5 +89,46 @@ class Server extends AbstractClient {
         }
 
         return $nodes;
+    }
+
+
+    /**
+     * DELETE jobs from the connected node.
+     *
+     * @param string[] $jobs Job IDs to delete.
+     *
+     * @return int Number of jobs deleted
+     */
+    public function del(array $jobs)
+    {
+        try {
+            return (int) $this->send(array_merge(['DELJOB'], $jobs));
+        } catch (CommandException $e) {
+            return 0;
+        }
+
+    }
+
+
+    /**
+     * Retrieve an Iterator over available jobs on the connected Disque node.
+     *
+     * @param int        $count
+     * @param array      $queues
+     * @param array      $states
+     * @param            $format
+     *
+     * @return Iterator
+     * @see https://github.com/antirez/disque#jscan-cursor-count-count-busyloop-queue-queue-state-state1-state-state2--state-staten-reply-allid
+     */
+    public function jscan($count = 50, array $queues = [], array $states = [], $format = JScanIterator::FORMAT_ID)
+    {
+        $iterator = new JScanIterator($this->stream, $this->log);
+        $iterator->setCount($count);
+        $iterator->setQueues($queues);
+        $iterator->setStates($states);
+        $iterator->setFormat($format);
+
+        return $iterator;
     }
 }

@@ -22,7 +22,7 @@ that holds the link to the connected Disque node.
 
 ### Setup a stream
 
-First thing to do is to connect to a Disque server. You can use the
+The first thing to do is to connect to a Disque node. You can use the
 `Phloppy\Stream\Pool` class to connect to a random instance in the cluster.
 
 ``` php
@@ -33,18 +33,22 @@ Then, inject the `$pool` to a client implementation.
 
 ### Producer
 
+Holds all API commands related to submitting jobs to a Disque cluster.
+
 ``` php
 $producer = new Producer($pool);
-$job = $producer->addJob('test', Phloppy\Job::create(['body' => 42]));
+$job = $producer->addJob('test', Job::create(['body' => 42]));
 ```
 
-Further Commands:
+Commands:
 
 - `addJob(queueName, job, [maxlen = 0], [async = false])`
 - `setReplicationTimeout(msecs)`
 - `setReplicationFactor(n)`
 
 ### Consumer
+
+Implements all commands related to getting jobs from a Disque cluster.
 
 ``` php
 $consumer = new Consumer($pool);
@@ -53,7 +57,7 @@ $job = $consumer->getJob('test');
 $consumer->ack($job);
 ```
 
-Further commands:
+Commands:
 
 - `getJob(queueNames)`
 - `getJobs(queueNames, numberOfJobs)`
@@ -77,10 +81,12 @@ Commands:
 - `peek(queueName)`
 - `scan(count,min,max,rate)`
 
-### Server
+### Node
+
+Contains commands related to a single Disque instances.
 
 ``` php
-$consumer = new Server($pool);
+$consumer = new Node($pool);
 $nodes = $consumer->hello();
 ```
 
@@ -90,6 +96,7 @@ Commands:
 - `info()`
 - `ping()`
 - `auth(password)`
+- `jscan(count, queues[], states[], format)`
 
 ### Cluster
 

@@ -16,16 +16,16 @@ class Cluster extends AbstractClient {
     /**
      * Introduce the provided nodes to the connected Disque instance.
      *
-     * @param string[] $streamUrls
+     * @param string[] $nodeUrls
      *
      * @return string[]
      * @see http://redis.io/commands/cluster-meet
      */
-    public function meet(array $streamUrls)
+    public function meet(array $nodeUrls)
     {
-        $current = $this->stream->getStreamUrl();
+        $current = $this->stream->getNodeUrl();
 
-        return array_filter($streamUrls, function($url) use ($current) {
+        return array_filter($nodeUrls, function($url) use ($current) {
             if ($url === $current) {
                 return true;
             }

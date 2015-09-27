@@ -49,5 +49,5 @@ interface StreamInterface {
      *
      * @return string
      */
-    public function getStreamUrl();
+    public function getNodeUrl();
 }
