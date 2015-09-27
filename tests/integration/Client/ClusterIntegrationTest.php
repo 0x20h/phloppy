@@ -9,6 +9,6 @@ class ClusterIntegrationTest extends AbstractIntegrationTest {
     public function testMeet()
     {
         $cluster = new Cluster($this->stream);
-        $ok = $cluster->meet([$this->stream->getStreamUrl()]);
+        $ok = $cluster->meet([$this->stream->getNodeUrl()]);
     }
 }

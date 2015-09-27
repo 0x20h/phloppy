@@ -50,14 +50,14 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertTrue($pool->isConnected());
-        $connected = $pool->getActiveServer();
+        $connected = $pool->getActiveNode();
         $pool->reconnect();
         $this->assertTrue($pool->isConnected());
-        $this->assertNotSame($connected, $pool->getActiveServer());
+        $this->assertNotSame($connected, $pool->getActiveNode());
     }
 
 
-    public function testGetServers()
+    public function testGetNodes()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
 
@@ -67,7 +67,7 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
             $this->markTestSkipped($e->getMessage());
         }
 
-        $this->assertSame($servers, $pool->getStreamUrls());
+        $this->assertSame($servers, $pool->getNodeUrls());
     }
 
 }

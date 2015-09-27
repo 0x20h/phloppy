@@ -10,28 +10,24 @@ class QScanIteratorTest extends \PHPUnit_Framework_TestCase {
     {
         $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setCount(100));
-        $this->assertSame(100, $client->getCount());
     }
 
     public function testRate()
     {
         $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setRate(100));
-        $this->assertSame(100, $client->getRate());
     }
 
     public function testMin()
     {
         $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setMin(100));
-        $this->assertSame(100, $client->getMin());
     }
 
     public function testMax()
     {
         $client = new QScanIterator($this->getMock('\Phloppy\Stream\StreamInterface'));
         $this->assertSame($client, $client->setMax(100));
-        $this->assertSame(100, $client->getMax());
     }
 
     public function testScan()

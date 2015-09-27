@@ -19,7 +19,7 @@ class ClusterTest extends \PHPUnit_Framework_TestCase {
             ->willReturn('+OK');
 
         $mock->expects($this->once())
-            ->method('getStreamUrl')
+            ->method('getNodeUrl')
             ->willReturn('a');
 
         $cluster = new Cluster($mock);
@@ -47,7 +47,7 @@ class ClusterTest extends \PHPUnit_Framework_TestCase {
             ->willReturn('+OK');
 
         $mock->expects($this->once())
-            ->method('getStreamUrl')
+            ->method('getNodeUrl')
             ->willReturn('a');
 
         $cluster = new Cluster($mock);

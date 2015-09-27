@@ -2,6 +2,7 @@
 
 namespace Phloppy\Client;
 
+use Iterator;
 use Phloppy\Client\Queue\QScanIterator;
 use Phloppy\Job;
 
@@ -46,7 +47,7 @@ class Queue extends AbstractClient {
      * @param int $max Filter queues with at most max elements.
      * @param int $rate Filter queues by job import rate.
      *
-     * @return QScanIterator
+     * @return Iterator
      */
     public function scan($count = 50, $min = 0, $max = 0, $rate = 0)
     {

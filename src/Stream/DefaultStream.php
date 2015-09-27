@@ -14,7 +14,7 @@ class DefaultStream implements StreamInterface
      *
      * @var string
      */
-    private $streamUrl;
+    private $nodeUrl;
 
     /**
      * @var LoggerInterface
@@ -27,14 +27,14 @@ class DefaultStream implements StreamInterface
     private $stream;
 
 
-    public function __construct($streamUrl, LoggerInterface $log = null)
+    public function __construct($nodeUrl, LoggerInterface $log = null)
     {
         if (!$log) {
             $log = new NullLogger();
         }
 
         $this->log = $log;
-        $this->streamUrl = $streamUrl;
+        $this->nodeUrl = $nodeUrl;
 
         $this->connect();
     }
@@ -52,14 +52,14 @@ class DefaultStream implements StreamInterface
         $connectTimeout = 1;
         $errstr = '';
         $errno = 0;
-        $stream = @stream_socket_client($this->streamUrl, $errno, $errstr, $connectTimeout);
+        $stream = @stream_socket_client($this->nodeUrl, $errno, $errstr, $connectTimeout);
 
         if (!$stream) {
-            $this->log->warning('unable to connect to '.$this->streamUrl.': '.$errstr);
-            throw new ConnectException('Unable to connect to resource '.$this->streamUrl.'. '.$errstr, $errno);
+            $this->log->warning('unable to connect to '.$this->nodeUrl.': '.$errstr);
+            throw new ConnectException('Unable to connect to resource '.$this->nodeUrl.'. '.$errstr, $errno);
         }
 
-        $this->log->info('connected to '.$this->streamUrl);
+        $this->log->info('connected to '.$this->nodeUrl);
         $this->stream = $stream;
 
         return true;
@@ -68,10 +68,10 @@ class DefaultStream implements StreamInterface
 
     public function close()
     {
-        $this->log->info('closing connection: '.$this->streamUrl);
+        $this->log->info('closing connection: '.$this->nodeUrl);
         stream_socket_shutdown($this->stream, STREAM_SHUT_RDWR);
         $this->stream = null;
-        $this->log->info('connection closed: '.$this->streamUrl);
+        $this->log->info('connection closed: '.$this->nodeUrl);
 
         return true;
     }
@@ -95,7 +95,6 @@ class DefaultStream implements StreamInterface
         }
 
         $this->log->debug('readLine()', [$line]);
-
         return $line;
     }
 
@@ -147,12 +146,12 @@ class DefaultStream implements StreamInterface
 
 
     /**
-     * return the internal stream url.
+     * return the internal node url.
      *
      * @return string
      */
-    public function getStreamUrl()
+    public function getNodeUrl()
     {
-        return $this->streamUrl;
+        return $this->nodeUrl;
     }
 }
