@@ -11,7 +11,7 @@ class StreamException extends Exception {
 
     private $operation;
 
-    public function __construct($operation, $message = '', $code = null, \Exception $prev)
+    public function __construct($operation, $message = '', $code = null, \Exception $prev = null)
     {
         parent::__construct($message, $code, $prev);
         $this->operation = $operation;
