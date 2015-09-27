@@ -59,4 +59,28 @@ class Queue extends AbstractClient {
 
         return $iterator;
     }
+
+
+    /**
+     * Enqueue the given job Ids.
+     *
+     * @param string[] $jobIds
+     * @return int
+     */
+    public function enqueue(array $jobIds)
+    {
+        return (int) $this->send(array_merge(['ENQUEUE'], $jobIds));
+    }
+
+
+    /**
+     * Dequeue the given job Ids.
+     *
+     * @param string[] $jobIds
+     * @return int
+     */
+    public function dequeue(array $jobIds)
+    {
+        return (int) $this->send(array_merge(['DEQUEUE'], $jobIds));
+    }
 }

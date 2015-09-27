@@ -112,4 +112,32 @@ class QueueIntegrationTest extends AbstractIntegrationTest {
 
         $this->assertContains($queueName, $buffer);
     }
+
+
+    public function testEnqueueDequeue()
+    {
+        $queueName = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $queue     = new Queue($this->stream);
+        $producer  = new Producer($this->stream);
+        $node      = new Node($this->stream);
+
+        $this->assertEquals(0, $queue->len($queueName));
+        $job1 = $producer->addJob($queueName, Job::create(['body' => 'test-enq-deq-1']));
+        $job2 = $producer->addJob($queueName, Job::create(['body' => 'test-enq-deq-2']));
+
+        $this->assertEquals(2, $queue->len($queueName));
+        // dequeue one of the jobs
+        $this->assertEquals(1, $queue->dequeue([$job1->getId()]));
+        // now only one job left in queue
+        $this->assertEquals(1, $queue->len($queueName));
+        // job2 still enqueued, so none should be enqueued
+        $this->assertEquals(0, $queue->enqueue([$job2->getId()]));
+        // job1 is enqueued again, so 1 should be returned
+        $this->assertEquals(1, $queue->enqueue([$job1->getId()]));
+        // and the queue has len 2 again
+        $this->assertEquals(2, $queue->len($queueName));
+
+        // cleanup
+        $this->assertEquals(2, $node->del([$job1->getId(), $job2->getId()]));
+    }
 }
