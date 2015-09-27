@@ -2,6 +2,8 @@
 
 namespace Phloppy\Client;
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Phloppy\Exception\ConnectException;
 use Phloppy\Stream\Pool;
 use Phloppy\Stream\StreamInterface;
@@ -28,12 +30,16 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
 
         try {
             $servers = explode(',', $_ENV['DISQUE_SERVERS']);
-            $this->log = new NullLogger();
 
-            if (!empty($_ENV['LOGFILE'])) {
-                $this->log = new \Monolog\Logger(new \Monolog\Handler\StreamHandler($_ENV['LOGFILE']));
+            if (!$this->log) {
+                $this->log = new NullLogger();
+
+                if (!empty($_ENV['LOGFILE'])) {
+                    $this->log = new Logger('tests', [new StreamHandler($_ENV['LOGFILE'])]);
+                }
             }
 
+            $this->log->info('testing '. $this->getName());
             $this->stream = new Pool($servers, $this->log);
         } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());

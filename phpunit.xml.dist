@@ -26,5 +26,6 @@
 	</filter>
 	 <php>
          <env name="DISQUE_SERVERS" value="tcp://127.0.0.1:7711" />
+         <env name="LOGFILE" value="logs/tests.log" />
 	 </php>
 </phpunit>

@@ -54,10 +54,11 @@ class RespUtils
                 return $result;
 
             case ':': // INTEGERS
-                return (int)$result;
+                return (int) $result;
 
             case '$': // BULK STRINGS
-                $result = (int)$result;
+                $result = (int) $result;
+
                 if ($result == -1) {
                     return null;
                 }
