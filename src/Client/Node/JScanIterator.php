@@ -84,16 +84,16 @@ class JScanIterator extends AbstractClient implements \Iterator {
                 $command[] = 'BUSYLOOP';
             }
 
-            if ($this->queues) {
-                $command = array_reduce($this->queues, function($p, $c) {
-                    return array_merge($p, ['QUEUE', $c]);
+            if (!empty($this->queues)) {
+                $command = array_reduce($this->queues, function($prev, $current) {
+                    return array_merge($prev, ['QUEUE', $current]);
                 }, $command);
             }
 
 
-            if ($this->states) {
-                $command = array_reduce($this->states, function($p, $c) {
-                    return array_merge($p, ['STATE', $c]);
+            if (!empty($this->states)) {
+                $command = array_reduce($this->states, function($prev, $current) {
+                    return array_merge($prev, ['STATE', $current]);
                 }, $command);
             }
 
@@ -174,7 +174,7 @@ class JScanIterator extends AbstractClient implements \Iterator {
 
 
     /**
-     * @param \string[] $queues
+     * @param string[] $queues
      */
     public function setQueues($queues)
     {
@@ -183,7 +183,7 @@ class JScanIterator extends AbstractClient implements \Iterator {
 
 
     /**
-     * @param \string[] $states
+     * @param string[] $states
      */
     public function setStates($states)
     {
