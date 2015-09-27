@@ -97,4 +97,16 @@ class Consumer extends AbstractClient {
 
         return Job::create(RespUtils::toAssoc($result));
     }
+
+
+    /**
+     * NACK the given job ids.
+     *
+     * @param string[] $jobIds
+     * @return int Number of NACK'd jobs
+     */
+    public function nack(array $jobIds)
+    {
+        return (int) $this->send(array_merge(['NACK'], $jobIds));
+    }
 }

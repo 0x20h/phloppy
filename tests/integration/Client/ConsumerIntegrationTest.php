@@ -48,7 +48,7 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
     }
 
 
-    public function testFindJob()
+    public function testShow()
     {
         $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
         $consumer = new Consumer($this->stream);
@@ -65,10 +65,33 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
      * @expectedException \Phloppy\Exception\CommandException
      * @expectedExceptionMessage BADID Invalid Job ID format.
      */
-    public function testFindJobBadJobId()
+    public function testShowBadJobId()
     {
-
         $consumer = new Consumer($this->stream);
         $consumer->show('foo');
+    }
+
+
+    public function testNack()
+    {
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $consumer = new Consumer($this->stream);
+        $producer = new Producer($this->stream);
+
+        // unknown jobid
+        $this->assertEquals(0, $consumer->nack(['DIf0148058ffab72d8692e5ece37fb0cfeecabd940023cSQ']));
+
+        $job = $producer->addJob($queue, Job::create(['body' => __METHOD__]));
+        $jobConsumed = $consumer->getJob($queue);
+        $this->assertSame($job->getId(), $jobConsumed->getId());
+        $this->assertEquals(1, $consumer->nack([$jobConsumed->getId()]));
+
+
+        // NACK'd job should be reinserted
+        $nackdJob = $consumer->getJob($queue);
+        $this->assertEquals($job->getId(), $nackdJob->getId());
+
+        // cleanup
+        $this->assertEquals(1, $consumer->ack($nackdJob));
     }
 }
