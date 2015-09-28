@@ -63,7 +63,7 @@ Commands:
 - `getJobs(queueNames, numberOfJobs)`
 - `ack(job)`
 - `fastAck(job)`
-- `findJob(jobid)`
+- `show(jobid)`
 
 ### Queue
 
