@@ -109,4 +109,15 @@ class Consumer extends AbstractClient {
     {
         return (int) $this->send(array_merge(['NACK'], $jobIds));
     }
+
+
+    /**
+     * @param Job $job
+     *
+     * @return int
+     */
+    public function working(Job $job)
+    {
+        return (int) $this->send(['WORKING', $job->getId()]);
+    }
 }
