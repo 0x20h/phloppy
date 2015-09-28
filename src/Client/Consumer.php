@@ -112,9 +112,13 @@ class Consumer extends AbstractClient {
 
 
     /**
+     * Send a notice to the server that this client is still processing the job.
+     *
      * @param Job $job
      *
-     * @return int
+     * @return int The current retry time for the job
+     *
+     * @see https://github.com/antirez/disque#working-jobid
      */
     public function working(Job $job)
     {
