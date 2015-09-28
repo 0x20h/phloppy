@@ -109,4 +109,19 @@ class Consumer extends AbstractClient {
     {
         return (int) $this->send(array_merge(['NACK'], $jobIds));
     }
+
+
+    /**
+     * Send a notice to the server that this client is still processing the job.
+     *
+     * @param Job $job
+     *
+     * @return int The current retry time for the job
+     *
+     * @see https://github.com/antirez/disque#working-jobid
+     */
+    public function working(Job $job)
+    {
+        return (int) $this->send(['WORKING', $job->getId()]);
+    }
 }

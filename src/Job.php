@@ -182,6 +182,10 @@ class Job {
             $job->setTtl($args['ttl']);
         }
 
+        if (isset($args['retry'])) {
+            $job->setRetry($args['retry']);
+        }
+
         return $job;
     }
 

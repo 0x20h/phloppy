@@ -94,4 +94,17 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
         // cleanup
         $this->assertEquals(1, $consumer->ack($nackdJob));
     }
+
+
+    public function testWorking()
+    {
+        $retry = rand(30, 60);
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $consumer = new Consumer($this->stream);
+        $producer = new Producer($this->stream);
+        $producer->addJob($queue, Job::create(['body' => __METHOD__, 'retry' => $retry, 'ttl' => 600]));
+        $job = $consumer->getJob($queue);
+        $this->assertEquals($retry, $consumer->working($job));
+    }
+
 }
