@@ -85,7 +85,7 @@ Commands:
 
 ### Node
 
-Contains commands related to a single Disque instances.
+Contains commands related to a single Disque instance.
 
 ``` php
 $consumer = new Node($pool);
