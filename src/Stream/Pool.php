@@ -2,6 +2,10 @@
 
 namespace Phloppy\Stream;
 
+use Phloppy\Cache\CacheInterface;
+use Phloppy\Cache\MemoryCache;
+use Phloppy\Client\Node;
+use Phloppy\NodeInfo;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Phloppy\Exception\ConnectException;
@@ -10,6 +14,12 @@ use Phloppy\Exception\ConnectException;
  * Phloppy Node Pool.
  */
 class Pool implements StreamInterface {
+
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
+
     /**
      * @var array
      */
@@ -25,13 +35,15 @@ class Pool implements StreamInterface {
      */
     private $connected;
 
+
     /**
-     * @param array $nodeUrls
+     * @param array                $nodeUrls
+     * @param CacheInterface|null  $cache
      * @param LoggerInterface|null $log
      *
      * @throws ConnectException
      */
-    public function __construct(array $nodeUrls = array(), LoggerInterface $log = null)
+    public function __construct(array $nodeUrls = array(), CacheInterface $cache = null, LoggerInterface $log = null)
     {
         $this->nodeUrls = $nodeUrls;
 
@@ -39,7 +51,12 @@ class Pool implements StreamInterface {
             $log = new NullLogger();
         }
 
+        if (!$cache) {
+            $cache = new MemoryCache();
+        }
+
         $this->log       = $log;
+        $this->cache     = $cache;
         $this->connected = $this->connect();
     }
 
@@ -73,21 +90,35 @@ class Pool implements StreamInterface {
     }
 
     /**
-     * Connect to a random node in the node list.
+     * Connect to a random node in the (cached) node list.
      *
      * @return DefaultStream Stream to a connected node.
      *
      * @throws ConnectException
      */
     private function connect() {
-        $nodes = $this->nodeUrls;
+        $key = array_reduce($this->nodeUrls, function($c, $p) { return md5($c . $p);}, '');
+
+        // prefer cached results
+        $hit = $nodes = $this->cache->get($key);
+
+        if (empty($hit)) {
+            $nodes = $this->nodeUrls;
+        }
 
         while (count($nodes)) {
           // pick random server
           $idx = rand(0, count($nodes) - 1);
 
           try {
-              return new DefaultStream($nodes[$idx], $this->log);
+              $stream = new DefaultStream($nodes[$idx], $this->log);
+
+              // update cache
+              if (empty($hit)) {
+                  $this->updateNodes($key, $stream);
+              }
+
+              return $stream;
           } catch (ConnectException $e) {
              $this->log->warning($e->getMessage());
           }
@@ -162,5 +193,21 @@ class Pool implements StreamInterface {
     public function getNodeUrl()
     {
         return $this->connected->getNodeUrl();
+    }
+
+
+    /**
+     * Update the node list using the HELLO command.
+     *
+     * @param string          $key
+     * @param StreamInterface $stream
+     */
+    private function updateNodes($key, StreamInterface $stream)
+    {
+        $this->nodeUrls = array_map(function(NodeInfo $e) {
+            return $e->getServer();
+        }, (new Node($stream))->hello());
+
+        $this->cache->set($key, $this->nodeUrls, 10);
     }
 }

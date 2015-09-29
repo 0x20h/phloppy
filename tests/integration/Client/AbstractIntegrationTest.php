@@ -40,7 +40,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
             }
 
             $this->log->info('testing '. $this->getName());
-            $this->stream = new Pool($servers, $this->log);
+            $this->stream = new Pool($servers, null, $this->log);
         } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());
         }

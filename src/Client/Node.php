@@ -71,17 +71,16 @@ class Node extends AbstractClient {
      */
     public function hello()
     {
-        $nodes   = [];
-        $rsp     = $this->send(['HELLO']);
-        $version = array_shift($rsp);
+        $nodes    = [];
+        $response = $this->send(['HELLO']);
+        $version  = array_shift($response);
 
         switch ($version) {
             case 1:
-                /* $active = */ array_shift($rsp);
-                $protocol = 'tcp';
+                /* active = */ array_shift($response);
 
-                foreach ($rsp as $node) {
-                    $server  = $protocol.'://'.$node[1].':'.$node[2];
+                foreach ($response as $node) {
+                    $server  = 'tcp://'.$node[1].':'.$node[2];
                     $nodes[] = new NodeInfo($node[0], $server, $node[3]);
                 }
 
