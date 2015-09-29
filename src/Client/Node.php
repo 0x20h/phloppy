@@ -77,7 +77,16 @@ class Node extends AbstractClient {
 
         switch ($version) {
             case 1:
-                /* active = */ array_shift($response);
+                // active node id
+                array_shift($response);
+
+                // in single node mode the server may not have
+                // determinded its own IP address, so we just use the
+                // node url that we used to connect.
+                if (count($response === 1) && $response[0][1] === '') {
+                    $host = parse_url($this->stream->getNodeUrl(), PHP_URL_HOST);
+                    $response[0][1] = $host;
+                }
 
                 foreach ($response as $node) {
                     $server  = 'tcp://'.$node[1].':'.$node[2];
