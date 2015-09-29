@@ -1,4 +1,5 @@
 /vendor
+/logs
 /composer.lock
 /phpunit.xml
 /.idea
