@@ -47,5 +47,6 @@ class MemoryCache implements CacheInterface
     public function set($key, array $nodes, $ttl)
     {
         $this->records[$key] = ['nodes' => $nodes, 'expire' => time() + $ttl];
+        return true;
     }
 }

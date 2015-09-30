@@ -44,7 +44,7 @@ class FileCache extends MemoryCache implements CacheInterface
     {
         $this->read();
         parent::set($key, $nodes, $ttl);
-        $this->write();
+        return $this->write();
     }
 
     private function read()
@@ -60,7 +60,8 @@ class FileCache extends MemoryCache implements CacheInterface
     private function write()
     {
         flock($this->file, LOCK_EX);
-        fwrite($this->file, serialize($this->records));
+        $bytes = fwrite($this->file, serialize($this->records));
         flock($this->file, LOCK_UN);
+        return $bytes > 0;
     }
 }

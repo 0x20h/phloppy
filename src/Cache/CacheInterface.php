@@ -16,9 +16,9 @@ interface CacheInterface
     /**
      * Cache the given Nodes.
      *
-     * @param string  $key
-     * @param string[]  $nodes
-     * @param int     $ttl
+     * @param string   $key
+     * @param string[] $nodes
+     * @param int      $ttl
      *
      * @return bool
      */

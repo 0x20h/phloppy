@@ -84,7 +84,7 @@ class Node extends AbstractClient {
                 // determinded its own IP address, so we just use the
                 // node url that we used to connect.
                 if (count($response === 1) && $response[0][1] === '') {
-                    $host = parse_url($this->stream->getNodeUrl(), PHP_URL_HOST);
+                    $host           = parse_url($this->stream->getNodeUrl(), PHP_URL_HOST);
                     $response[0][1] = $host;
                 }
 
