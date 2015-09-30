@@ -206,7 +206,7 @@ class Pool implements StreamInterface {
     {
         $this->nodeUrls = array_map(function(NodeInfo $e) {
             return $e->getServer();
-        }, (new Node($stream))->hello());
+        }, (new Node($stream, $this->log))->hello());
 
         $this->cache->set($key, $this->nodeUrls, 10);
     }
