@@ -26,7 +26,7 @@ class MemoryCache implements CacheInterface
 
         $record = $this->records[$key];
 
-        if ($record['expire'] < microtime(true)) {
+        if ($record['expire'] < time()) {
             unset($this->records[$key]);
             return null;
         }
@@ -40,13 +40,30 @@ class MemoryCache implements CacheInterface
      *
      * @param string   $key
      * @param string[] $nodes
-     * @param int      $ttl TTL in microseconds.
+     * @param int      $ttl TTL in seconds.
      *
      * @return bool
      */
     public function set($key, array $nodes, $ttl)
     {
-        $this->records[$key] = ['nodes' => $nodes, 'expire' => microtime(true) + $ttl];
+        $this->records[$key] = ['nodes' => $nodes, 'expire' => time() + $ttl];
         return true;
+    }
+
+
+    /**
+     * Return seconds left until the key expires.
+     *
+     * @param string $key
+     *
+     * @return int The number of seconds the key is valid. 0 if expired or unknown.
+     */
+    public function expires($key)
+    {
+        if (!isset($this->records[$key])) {
+            return 0;
+        }
+
+        return max(0, $this->records[$key]['expire'] - time());
     }
 }

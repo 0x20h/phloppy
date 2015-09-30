@@ -21,6 +21,13 @@ class Pool implements StreamInterface {
     private $cache;
 
     /**
+     * Cache TTL.
+     *
+     * @var int Default is 10 minutes
+     */
+    private $ttl = 600000;
+
+    /**
      * @var array
      */
     private $nodeUrls;
@@ -102,7 +109,9 @@ class Pool implements StreamInterface {
         // prefer cached results
         $hit = $nodes = $this->cache->get($key);
 
-        if (empty($hit)) {
+        if (!empty($hit)) {
+            $this->log->notice('nodelist retrieved from cache', ['nodes' => $nodes, 'key' => $key]);
+        } else {
             $nodes = $this->nodeUrls;
         }
 
@@ -197,6 +206,28 @@ class Pool implements StreamInterface {
 
 
     /**
+     * Return the internal node cache TTL.
+     *
+     * @return int
+     */
+    public function getCacheTtl()
+    {
+        return $this->ttl;
+    }
+
+
+    /**
+     * Set the internal node cache TTL.
+     *
+     * @param int $ttl
+     */
+    public function setCacheTtl($ttl)
+    {
+        $this->ttl = (int) $ttl;
+    }
+
+
+    /**
      * Update the node list using the HELLO command.
      *
      * @param string          $key
@@ -208,6 +239,12 @@ class Pool implements StreamInterface {
             return $e->getServer();
         }, (new Node($stream, $this->log))->hello());
 
-        $this->cache->set($key, $this->nodeUrls, 10);
+        $this->log->notice('caching connection info from HELLO', [
+            'key'   => $key,
+            'nodes' => $this->nodeUrls,
+            'ttl'   => $this->getCacheTtl(),
+        ]);
+
+        $this->cache->set($key, $this->nodeUrls, $this->getCacheTtl());
     }
 }

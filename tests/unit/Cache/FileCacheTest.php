@@ -36,9 +36,10 @@ class FileCacheTest extends \PHPUnit_Framework_TestCase
     {
         $key = uniqid();
         $c = new FileCache($this->file);
-        $this->assertTrue($c->set($key, ['bar' => ['baz']], 500));
+        $this->assertTrue($c->set($key, ['bar' => ['baz']], 1));
         $this->assertEquals(['bar' => ['baz']], $c->get($key));
-        usleep(550000);
+        $this->assertTrue($c->expires($key) <= time() + 1);
+        sleep(2);
         $this->assertNull($c->get($key));
     }
 }

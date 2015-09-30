@@ -34,7 +34,7 @@ class FileCache extends MemoryCache implements CacheInterface
      *
      * @param string $key
      * @param string[] $nodes
-     * @param int    $ttl TTL in microseconds
+     * @param int    $ttl TTL in seconds
      *
      * @return bool
      */
@@ -45,9 +45,14 @@ class FileCache extends MemoryCache implements CacheInterface
         return $this->write();
     }
 
+
+    /**
+     * Read cache from disk.
+     */
     private function read()
     {
         flock($this->file, LOCK_SH);
+        rewind($this->file);
         $s = fgets($this->file);
         flock($this->file, LOCK_UN);
 
@@ -55,13 +60,31 @@ class FileCache extends MemoryCache implements CacheInterface
     }
 
 
+    /**
+     * Write cache to disk.
+     *
+     * @return bool
+     */
     private function write()
     {
+        $cache = serialize($this->records);
         flock($this->file, LOCK_EX);
-        ftruncate($this->file, 0);
-        $bytes = fwrite($this->file, serialize($this->records));
         rewind($this->file);
+        ftruncate($this->file, 0);
+        $bytes = fwrite($this->file, $cache);
         flock($this->file, LOCK_UN);
-        return $bytes > 0;
+        return $bytes === strlen($cache);
     }
+
+
+    /**
+     * Close file handle.
+     */
+    function __destruct()
+    {
+        if (is_resource($this->file)) {
+            fclose($this->file);
+        }
+    }
+
 }
