@@ -13,8 +13,6 @@ class FileCache extends MemoryCache implements CacheInterface
         if (!$this->file) {
             throw new \RuntimeException('unable to open cache file '.$file);
         }
-
-        fclose($this->file);
     }
 
     /**
