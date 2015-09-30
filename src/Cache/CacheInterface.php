@@ -18,7 +18,7 @@ interface CacheInterface
      *
      * @param string   $key
      * @param string[] $nodes
-     * @param int      $ttl
+     * @param int      $ttl TTL in microseconds.
      *
      * @return bool
      */

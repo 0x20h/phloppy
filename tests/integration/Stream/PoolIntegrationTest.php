@@ -4,7 +4,7 @@ namespace Phloppy\Stream;
 
 use Phloppy\Exception\ConnectException;
 
-class PoolTest extends \PHPUnit_Framework_TestCase {
+class PoolIntegrationTest extends \PHPUnit_Framework_TestCase {
 
     public function testConnectFailsPartly()
     {
@@ -67,7 +67,9 @@ class PoolTest extends \PHPUnit_Framework_TestCase {
             $this->markTestSkipped($e->getMessage());
         }
 
-        $this->assertSame($servers, $pool->getNodeUrls());
+        foreach ($servers as $server) {
+            $this->assertTrue(in_array($server, $pool->getNodeUrls()));
+        }
     }
 
 }

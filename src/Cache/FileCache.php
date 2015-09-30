@@ -8,7 +8,7 @@ class FileCache extends MemoryCache implements CacheInterface
 
     public function __construct($file)
     {
-        $this->file = fopen($file, 'w');
+        $this->file = fopen($file, 'c+');
 
         if (!$this->file) {
             throw new \RuntimeException('unable to open cache file '.$file);
@@ -34,7 +34,7 @@ class FileCache extends MemoryCache implements CacheInterface
      *
      * @param string $key
      * @param string[] $nodes
-     * @param int    $ttl
+     * @param int    $ttl TTL in microseconds
      *
      * @return bool
      */
@@ -58,7 +58,9 @@ class FileCache extends MemoryCache implements CacheInterface
     private function write()
     {
         flock($this->file, LOCK_EX);
+        ftruncate($this->file, 0);
         $bytes = fwrite($this->file, serialize($this->records));
+        rewind($this->file);
         flock($this->file, LOCK_UN);
         return $bytes > 0;
     }
