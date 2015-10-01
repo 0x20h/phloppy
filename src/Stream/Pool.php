@@ -21,11 +21,11 @@ class Pool implements StreamInterface {
     private $cache;
 
     /**
-     * Cache TTL.
+     * Cache TTL in seconds.
      *
      * @var int Default is 10 minutes
      */
-    private $ttl = 600000;
+    private $ttl = 600;
 
     /**
      * @var array
