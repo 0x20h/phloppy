@@ -23,7 +23,7 @@ that holds the link to the connected node.
 The first thing to do is to connect to a Disque node. For that, use one of the
 `StreamInterface` implementations.
 
-```
+``` php
 $cache  = new FileCache('/tmp/nodes');
 $stream = new CachedPool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712'], $cache);
 $stream->connect();
@@ -31,7 +31,7 @@ $stream->connect();
 
 Then, inject the `$stream` into a client, i.e. a `Consumer`.
 
-```
+``` php
 $consumer = new Consumer($stream);
 while (true) {
    $job = $consumer->getJob('my_queue');
@@ -131,15 +131,16 @@ Commands:
 Connect to a single node. If the connection fails, a `ConnectException` thrown.
 If the node fails, a StreamException is thrown.
 
-```
+``` php
 $stream = new DefaultStream('tcp://127.0.0.1:7711');
 ```
 
 ### Pool
 
-Connect randomly to on of the provided nodes.
+Connect randomly to on of the provided nodes. If during operation one of the nodes dies or doesn't respond anymore
+the `Pool` automatically reconnects to one of the other nodes. If no other node is left, a `ConnectionException` is thrown.
 
-```
+``` php
 $stream = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
 ```
 
@@ -149,7 +150,7 @@ Same behavior as the `Pool` implementation, but you can provide a `CacheInterfac
 in order to cache all existing cluster nodes. When connecting, a random node from the cached 
 cluster nodes is chosen.
 
-```
+``` php
 $cache = new FileCache('/tmp/nodes');
 $stream = new CachedPool(['tcp://127.0.0.1:7711'], $cache);
 ```
