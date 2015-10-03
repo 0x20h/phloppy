@@ -18,18 +18,31 @@ composer require 0x20h/phloppy:~0.0
 
 Disque's API is implemented in different `\Phloppy\Client` implementations that
 reflect their specific use case. All clients get injected a `StreamInterface`
-that holds the link to the connected Disque node.
+that holds the link to the connected node.
 
-The first thing to do is to connect to a Disque node. You can use one of the
-`StreamInterface` implementations to connect to a Disque node.
-
+The first thing to do is to connect to a Disque node. For that, use one of the
+`StreamInterface` implementations.
 
 ```
 $cache  = new FileCache('/tmp/nodes');
 $stream = new CachedPool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712'], $cache);
+$stream->connect();
 ```
 
-Then, inject the `$stream` to a client implementation.
+Then, inject the `$stream` into a client, i.e. a `Consumer`.
+
+```
+$consumer = new Consumer($stream);
+while (true) {
+   $job = $consumer->getJob('my_queue');
+   // process $job
+}
+```
+
+## Clients
+
+Clients are separated into `Producer`, `Consumer`, `Node`, `Queue` and `Cluster`.
+Every client contains methods related to their specific use-case.
 
 ### Producer
 
