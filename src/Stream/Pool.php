@@ -2,31 +2,34 @@
 
 namespace Phloppy\Stream;
 
+use Phloppy\Exception\ConnectException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Phloppy\Exception\ConnectException;
 
 /**
  * Phloppy Node Pool.
  */
-class Pool implements StreamInterface {
+class Pool implements StreamInterface
+{
+
     /**
      * @var array
      */
-    private $nodeUrls;
+    protected $nodeUrls;
 
     /**
      * @var LoggerInterface
      */
-    private $log;
+    protected $log;
 
     /**
      * @var StreamInterface
      */
-    private $connected;
+    protected $connected;
+
 
     /**
-     * @param array $nodeUrls
+     * @param array                $nodeUrls
      * @param LoggerInterface|null $log
      *
      * @throws ConnectException
@@ -47,7 +50,8 @@ class Pool implements StreamInterface {
     /**
      * @return array
      */
-    public function getNodeUrls() {
+    public function getNodeUrls()
+    {
         return $this->nodeUrls;
     }
 
@@ -69,8 +73,10 @@ class Pool implements StreamInterface {
     {
         $this->close();
         $this->connected = $this->connect();
+
         return true;
     }
+
 
     /**
      * Connect to a random node in the node list.
@@ -79,21 +85,25 @@ class Pool implements StreamInterface {
      *
      * @throws ConnectException
      */
-    private function connect() {
+    public function connect()
+    {
         $nodes = $this->nodeUrls;
 
         while (count($nodes)) {
-          // pick random server
-          $idx = rand(0, count($nodes) - 1);
+            // pick random server
+            $idx = rand(0, count($nodes) - 1);
 
-          try {
-              return new DefaultStream($nodes[$idx], $this->log);
-          } catch (ConnectException $e) {
-             $this->log->warning($e->getMessage());
-          }
+            try {
+                $stream = new DefaultStream($nodes[$idx], $this->log);
+                $stream->connect();
 
-          // remove the selected server from the list
-          array_splice($nodes, $idx, 1);
+                return $stream;
+            } catch (ConnectException $e) {
+                $this->log->warning($e->getMessage());
+            }
+
+            // remove the selected server from the list
+            array_splice($nodes, $idx, 1);
         }
 
         throw new ConnectException('unable to connect to any of ['.implode(',', $this->nodeUrls).']');
@@ -110,10 +120,12 @@ class Pool implements StreamInterface {
         return $this->connected->readLine();
     }
 
+
     /**
      * Read bytes off from the stream.
      *
      * @param int|null $maxlen
+     *
      * @return string The response.
      */
     public function readBytes($maxlen = null)
@@ -121,17 +133,20 @@ class Pool implements StreamInterface {
         return $this->connected->readBytes($maxlen);
     }
 
+
     /**
-     * Read
+     * @param string   $msg
+     * @param int|null $len
      *
-     * @param $msg
-     *
-     * @return StreamInterface the instance.
+     * @return StreamInterface the Stream instance.
      */
     public function write($msg, $len = null)
     {
-        return $this->connected->write($msg, $len);
+        $this->connected->write($msg, $len);
+
+        return $this;
     }
+
 
     /**
      * Close the stream.
@@ -142,6 +157,7 @@ class Pool implements StreamInterface {
     {
         return $this->connected->close();
     }
+
 
     /**
      * Check if the stream is connected.

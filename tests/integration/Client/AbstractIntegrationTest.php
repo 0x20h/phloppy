@@ -10,7 +10,8 @@ use Phloppy\Stream\StreamInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
+abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var StreamInterface
@@ -21,6 +22,7 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
      * @var LoggerInterface
      */
     protected $log;
+
 
     protected function setUp()
     {
@@ -39,12 +41,13 @@ abstract class AbstractIntegrationTest extends \PHPUnit_Framework_TestCase {
                 }
             }
 
-            $this->log->info('testing '. $this->getName());
+            $this->log->info('testing '.$this->getName());
             $this->stream = new Pool($servers, $this->log);
         } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());
         }
     }
+
 
     protected function tearDown()
     {
