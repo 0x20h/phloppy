@@ -138,7 +138,7 @@ $stream = new DefaultStream('tcp://127.0.0.1:7711');
 ### Pool
 
 Connect randomly to on of the provided nodes. If during operation one of the nodes dies or doesn't respond anymore
-the `Pool` automatically reconnects to one of the other nodes. If no other node is left, a `ConnectionException` is thrown.
+the `Pool` automatically reconnects to one of the other nodes. If no other node is left, a `ConnectException` is thrown.
 
 ``` php
 $stream = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
