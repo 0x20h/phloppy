@@ -66,6 +66,6 @@ class MemoryCache implements CacheInterface
             return 0;
         }
 
-        return max(0, $this->records[$key]['expire'] - time());
+        return (int) max(0, $this->records[$key]['expire'] - time());
     }
 }

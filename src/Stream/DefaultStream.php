@@ -180,7 +180,7 @@ class DefaultStream implements StreamInterface
      */
     protected function streamWrite($stream, $msg)
     {
-        return fwrite($this->stream, $msg);
+        return fwrite($stream, $msg);
     }
 
 

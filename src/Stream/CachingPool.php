@@ -59,8 +59,8 @@ class CachingPool extends Pool
      */
     public function connect()
     {
-        $key = array_reduce($this->nodeUrls, function ($c, $p) {
-            return md5($c.$p);
+        $key = array_reduce($this->nodeUrls, function ($current, $prev) {
+            return md5($current.$prev);
         }, '');
 
         // prefer cached results
@@ -112,8 +112,8 @@ class CachingPool extends Pool
      */
     private function updateNodes($key, StreamInterface $stream)
     {
-        $this->nodeUrls = array_map(function (NodeInfo $e) {
-            return $e->getServer();
+        $this->nodeUrls = array_map(function (NodeInfo $element) {
+            return $element->getServer();
         }, (new Node($stream, $this->log))->hello());
 
         $this->log->notice('caching connection info from HELLO', [

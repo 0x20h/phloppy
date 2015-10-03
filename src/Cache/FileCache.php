@@ -28,7 +28,6 @@ class FileCache extends MemoryCache implements CacheInterface
     public function get($key)
     {
         $this->read();
-
         return parent::get($key);
     }
 
@@ -58,10 +57,10 @@ class FileCache extends MemoryCache implements CacheInterface
     {
         flock($this->file, LOCK_SH);
         rewind($this->file);
-        $s = fgets($this->file);
+        $content = fgets($this->file);
         flock($this->file, LOCK_UN);
 
-        $this->records = unserialize($s);
+        $this->records = unserialize($content);
     }
 
 
