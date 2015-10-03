@@ -66,6 +66,17 @@ class FileCache extends MemoryCache implements CacheInterface
 
 
     /**
+     * Close file handle.
+     */
+    public function __destruct()
+    {
+        if (is_resource($this->file)) {
+            fclose($this->file);
+        }
+    }
+
+
+    /**
      * Write cache to disk.
      *
      * @return bool
@@ -80,17 +91,6 @@ class FileCache extends MemoryCache implements CacheInterface
         flock($this->file, LOCK_UN);
 
         return $bytes === strlen($cache);
-    }
-
-
-    /**
-     * Close file handle.
-     */
-    function __destruct()
-    {
-        if (is_resource($this->file)) {
-            fclose($this->file);
-        }
     }
 
 }
