@@ -20,38 +20,16 @@ Disque's API is implemented in different `\Phloppy\Client` implementations that
 reflect their specific use case. All clients get injected a `StreamInterface`
 that holds the link to the connected Disque node.
 
-### Setup a stream
-
 The first thing to do is to connect to a Disque node. You can use one of the
 `StreamInterface` implementations to connect to a Disque node.
 
+
+```
+$cache  = new FileCache('/tmp/nodes');
+$stream = new CachedPool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712'], $cache);
+```
+
 Then, inject the `$stream` to a client implementation.
-
-### Streams
-
-*DefautStream*:
-
-Connect to a single node. If the connection fails, a `ConnectException` thrown.
-If the node fails, a StreamException is thrown.
-
-```
-$stream = new DefaultStream('tcp://127.0.0.1:7711');
-```
-
-*Pool*:
-
-Connect randomly to on of the provided nodes.
-
-```
-$stream = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
-```
-
-*CachedPool*:
-
-Same behavior as the `Pool` implementation, but you can provide a `CacheInterface` implemention
-in order to cache all existing cluster nodes.
-When connecting, a random node from the cached cluster nodes is chosen.
-
 
 ### Producer
 
@@ -132,6 +110,37 @@ $cluster->meet($stream->getStreamUrls());
 Commands:
 
 - `meet($urls)`
+
+## Streams
+
+### DefautStream
+
+Connect to a single node. If the connection fails, a `ConnectException` thrown.
+If the node fails, a StreamException is thrown.
+
+```
+$stream = new DefaultStream('tcp://127.0.0.1:7711');
+```
+
+### Pool
+
+Connect randomly to on of the provided nodes.
+
+```
+$stream = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+```
+
+### CachedPool
+
+Same behavior as the `Pool` implementation, but you can provide a `CacheInterface` implemention
+in order to cache all existing cluster nodes. When connecting, a random node from the cached 
+cluster nodes is chosen.
+
+```
+$cache = new FileCache('/tmp/nodes');
+$stream = new CachedPool(['tcp://127.0.0.1:7711'], $cache);
+```
+
 
 # License
 
