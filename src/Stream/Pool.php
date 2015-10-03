@@ -42,8 +42,8 @@ class Pool implements StreamInterface
             $log = new NullLogger();
         }
 
-        $this->log = $log;
-        $this->connected = $this->connect($nodeUrls);
+        $this->log       = $log;
+        $this->connected = $this->connect();
     }
 
 
@@ -72,7 +72,7 @@ class Pool implements StreamInterface
     public function reconnect()
     {
         $this->close();
-        $this->connected = $this->connect($this->getNodeUrls());
+        $this->connected = $this->connect();
 
         return true;
     }
