@@ -16,6 +16,16 @@ class ProducerIntegrationTest extends AbstractIntegrationTest {
         $this->assertNotEquals('', $job->getId());
     }
 
+    public function testAddJobAsync()
+    {
+        $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
+        $producer = new Producer($this->stream);
+        $consumer = new Consumer($this->stream);
+        $this->assertEquals(
+            $producer->addJob($queue, Job::create(['body' => __METHOD__]), 0, true)->getId(),
+            $consumer->getJob($queue)->getId()
+        );
+    }
 
     public function testAddJobDelayed()
     {

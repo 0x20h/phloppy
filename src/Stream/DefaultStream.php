@@ -35,8 +35,6 @@ class DefaultStream implements StreamInterface
 
         $this->log = $log;
         $this->nodeUrl = $nodeUrl;
-
-        $this->connect();
     }
 
 
@@ -47,7 +45,7 @@ class DefaultStream implements StreamInterface
      *
      * @throws ConnectException
      */
-    private function connect()
+    public function connect()
     {
         $connectTimeout = 1;
         $errstr = '';
@@ -86,15 +84,16 @@ class DefaultStream implements StreamInterface
     public function readLine()
     {
         $this->log->debug('going to read a line from the stream');
-        $line = fgets($this->stream, 8192);
+        $line = $this->streamReadLine($this->stream);
 
         if (false === $line) {
-            $meta = stream_get_meta_data($this->stream);
+            $meta = $this->streamMeta($this->stream);
             $this->log->warning('fgets returned false', $meta);
             throw new StreamException(StreamException::OP_READ, 'stream_get_line returned false');
         }
 
         $this->log->debug('readLine()', [$line]);
+
         return $line;
     }
 
@@ -110,11 +109,11 @@ class DefaultStream implements StreamInterface
     public function readBytes($maxlen = null)
     {
         $this->log->debug('calling readbytes()', array('maxlen' => $maxlen));
-        $out = stream_get_contents($this->stream, $maxlen);
+        $out = $this->streamReadBytes($this->stream, $maxlen);
         $this->log->debug('readBytes()', [$maxlen, $out]);
 
         if (false === $out) {
-            $meta = stream_get_meta_data($this->stream);
+            $meta = $this->streamMeta($this->stream);
             $this->log->warning('stream_get_contents returned false', $meta);
             throw new StreamException(StreamException::OP_READ, 'stream_get_contents returned false');
         }
@@ -138,7 +137,7 @@ class DefaultStream implements StreamInterface
             $len = strlen($msg);
         }
 
-        $bytes = fwrite($this->stream, $msg);
+        $bytes = $this->streamWrite($this->stream, $msg);
         $this->log->debug('write()', ['written' => $bytes, 'len' => $len, 'msg' => $msg]);
 
         if ($bytes !== $len) {
@@ -168,5 +167,59 @@ class DefaultStream implements StreamInterface
     public function getNodeUrl()
     {
         return $this->nodeUrl;
+    }
+
+
+    /**
+     * Internal wrapper method, mainly for testing.
+     *
+     * @param resource $stream
+     * @param string   $msg
+     *
+     * @return int
+     */
+    protected function streamWrite($stream, $msg)
+    {
+        return fwrite($this->stream, $msg);
+    }
+
+
+    /**
+     * Internal wrapper method, mainly for testing.
+     *
+     * @param resource $stream
+     * @param          $len
+     *
+     * @return string
+     */
+    protected function streamReadBytes($stream, $len)
+    {
+        return stream_get_contents($stream, $len);
+    }
+
+
+    /**
+     * Internal wrapper method, mainly for testing.
+     *
+     * @param resource $stream
+     *
+     * @return string
+     */
+    protected function streamReadLine($stream)
+    {
+        return fgets($stream, 8192);
+    }
+
+
+    /**
+     * Internal wrapper method, mainly for testing.
+     *
+     * @param $stream
+     *
+     * @return array
+     */
+    protected function streamMeta($stream)
+    {
+        return stream_get_meta_data($stream);
     }
 }

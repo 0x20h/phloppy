@@ -4,7 +4,8 @@ namespace Phloppy\Stream;
 
 use Phloppy\Exception\ConnectException;
 
-class PoolIntegrationTest extends \PHPUnit_Framework_TestCase {
+class PoolTest extends \PHPUnit_Framework_TestCase
+{
 
     public function testConnectFailsPartly()
     {
@@ -12,7 +13,7 @@ class PoolIntegrationTest extends \PHPUnit_Framework_TestCase {
 
         try {
             new Pool($servers);
-        } catch(ConnectException $e) {
+        } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());
         }
 
@@ -27,6 +28,7 @@ class PoolIntegrationTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
+
     /**
      * @expectedException \Phloppy\Exception\ConnectException
      * @expectedExceptionMessage unable to connect to any of [tcp://127.0.2.2:35594]
@@ -39,13 +41,14 @@ class PoolIntegrationTest extends \PHPUnit_Framework_TestCase {
         $pool->close();
     }
 
+
     public function testReconnect()
     {
         $servers = explode(',', $_ENV['DISQUE_SERVERS']);
 
         try {
             $pool = new Pool($servers);
-        } catch(ConnectException $e) {
+        } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());
         }
 
@@ -63,13 +66,11 @@ class PoolIntegrationTest extends \PHPUnit_Framework_TestCase {
 
         try {
             $pool = new Pool($servers);
-        } catch(ConnectException $e) {
+        } catch (ConnectException $e) {
             $this->markTestSkipped($e->getMessage());
         }
 
-        foreach ($servers as $server) {
-            $this->assertTrue(in_array($server, $pool->getNodeUrls()));
-        }
+        $this->assertSame($servers, $pool->getNodeUrls());
     }
 
 }

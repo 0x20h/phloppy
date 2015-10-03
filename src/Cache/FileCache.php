@@ -4,16 +4,19 @@ namespace Phloppy\Cache;
 
 class FileCache extends MemoryCache implements CacheInterface
 {
+
     protected $file;
+
 
     public function __construct($file)
     {
-        $this->file = fopen($file, 'c+');
+        $this->file = @fopen($file, 'c+');
 
         if (!$this->file) {
             throw new \RuntimeException('unable to open cache file '.$file);
         }
     }
+
 
     /**
      * Retrieve the nodes under the given key.
@@ -25,6 +28,7 @@ class FileCache extends MemoryCache implements CacheInterface
     public function get($key)
     {
         $this->read();
+
         return parent::get($key);
     }
 
@@ -32,9 +36,9 @@ class FileCache extends MemoryCache implements CacheInterface
     /**
      * Cache the given Nodes.
      *
-     * @param string $key
+     * @param string   $key
      * @param string[] $nodes
-     * @param int    $ttl TTL in seconds
+     * @param int      $ttl TTL in seconds
      *
      * @return bool
      */
@@ -42,6 +46,7 @@ class FileCache extends MemoryCache implements CacheInterface
     {
         $this->read();
         parent::set($key, $nodes, $ttl);
+
         return $this->write();
     }
 
@@ -73,6 +78,7 @@ class FileCache extends MemoryCache implements CacheInterface
         ftruncate($this->file, 0);
         $bytes = fwrite($this->file, $cache);
         flock($this->file, LOCK_UN);
+
         return $bytes === strlen($cache);
     }
 

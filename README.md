@@ -22,21 +22,43 @@ that holds the link to the connected Disque node.
 
 ### Setup a stream
 
-The first thing to do is to connect to a Disque node. You can use the
-`Phloppy\Stream\Pool` class to connect to a random instance in the cluster.
+The first thing to do is to connect to a Disque node. You can use one of the
+`StreamInterface` implementations to connect to a Disque node.
 
-``` php
-$pool = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+Then, inject the `$stream` to a client implementation.
+
+### Streams
+
+*DefautStream*:
+
+Connect to a single node. If the connection fails, a `ConnectException` thrown.
+If the node fails, a StreamException is thrown.
+
+```
+$stream = new DefaultStream('tcp://127.0.0.1:7711');
 ```
 
-Then, inject the `$pool` to a client implementation.
+*Pool*:
+
+Connect randomly to on of the provided nodes.
+
+```
+$stream = new Pool(['tcp://127.0.0.1:7711', 'tcp://127.0.0.1:7712']);
+```
+
+*CachedPool*:
+
+Same behavior as the `Pool` implementation, but you can provide a `CacheInterface` implemention
+in order to cache all existing cluster nodes.
+When connecting, a random node from the cached cluster nodes is chosen.
+
 
 ### Producer
 
 Holds all API commands related to submitting jobs to a Disque cluster.
 
 ``` php
-$producer = new Producer($pool);
+$producer = new Producer($stream);
 $job = $producer->addJob('test', Job::create(['body' => 42]));
 ```
 
@@ -51,7 +73,7 @@ Commands:
 Implements all commands related to getting jobs from a Disque cluster.
 
 ``` php
-$consumer = new Consumer($pool);
+$consumer = new Consumer($stream);
 $job = $consumer->getJob('test');
 // do some work
 $consumer->ack($job);
@@ -68,7 +90,7 @@ Commands:
 ### Queue
 
 ``` php
-$queue = new Queue($pool);
+$queue = new Queue($stream);
 // print out the current queue len on the connected node
 echo $queue->len('test');
 // get the latest job out of 'test' without removing it
@@ -88,7 +110,7 @@ Commands:
 Contains commands related to a single Disque instance.
 
 ``` php
-$consumer = new Node($pool);
+$consumer = new Node($stream);
 $nodes = $consumer->hello();
 ```
 
@@ -103,8 +125,8 @@ Commands:
 ### Cluster
 
 ``` php
-$cluster = new Cluster($pool);
-$cluster->meet($pool->getStreamUrls());
+$cluster = new Cluster($stream);
+$cluster->meet($stream->getStreamUrls());
 ```
 
 Commands:

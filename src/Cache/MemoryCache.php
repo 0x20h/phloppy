@@ -2,14 +2,14 @@
 
 namespace Phloppy\Cache;
 
-use Phloppy\NodeInfo;
-
 class MemoryCache implements CacheInterface
 {
+
     /**
      * @var array
      */
     protected $records = [];
+
 
     /**
      * Retrieve the nodes under the given key.
@@ -28,6 +28,7 @@ class MemoryCache implements CacheInterface
 
         if ($record['expire'] < time()) {
             unset($this->records[$key]);
+
             return null;
         }
 
@@ -47,6 +48,7 @@ class MemoryCache implements CacheInterface
     public function set($key, array $nodes, $ttl)
     {
         $this->records[$key] = ['nodes' => $nodes, 'expire' => time() + $ttl];
+
         return true;
     }
 
