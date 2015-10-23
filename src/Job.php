@@ -1,11 +1,12 @@
 <?php
 namespace Phloppy;
 
-class Job {
+class Job
+{
 
-    const STATE_ACTIVE       = 'active';
-    const STATE_WAIT_REPL    = 'wait-repl';
-    const STATE_QUEUED       = 'queued';
+    const STATE_ACTIVE = 'active';
+    const STATE_WAIT_REPL = 'wait-repl';
+    const STATE_QUEUED = 'queued';
     const STATE_ACKNOWLEDGED = 'acknowledged';
 
     /**
@@ -15,14 +16,12 @@ class Job {
      */
     private $id = '';
 
-
     /**
      * Queue name this job was fetched from.
      *
      * @var string
      */
     private $queue = '';
-
 
     /**
      * Job body.
@@ -31,14 +30,12 @@ class Job {
      */
     private $body = '';
 
-
     /**
      * Delay time (before putting the job into the queue, in seconds).
      *
      * @var int
      */
     private $delay = 0;
-
 
     /**
      * Retry time (seconds).
@@ -49,7 +46,6 @@ class Job {
      * @var int
      */
     private $retry = 120;
-
 
     /**
      * The expire time (in seconds).
@@ -78,6 +74,7 @@ class Job {
         return $this->id;
     }
 
+
     /**
      * @param string $id
      */
@@ -85,6 +82,7 @@ class Job {
     {
         $this->id = $id;
     }
+
 
     /**
      * @return string
@@ -94,6 +92,7 @@ class Job {
         return $this->body;
     }
 
+
     /**
      * @return int
      */
@@ -102,13 +101,15 @@ class Job {
         return $this->delay;
     }
 
+
     /**
      * @param int $delay
      */
     public function setDelay($delay)
     {
-        $this->delay = (int) $delay;
+        $this->delay = (int)$delay;
     }
+
 
     /**
      * @return int
@@ -118,6 +119,7 @@ class Job {
         return $this->retry;
     }
 
+
     /**
      * @param int $retry
      */
@@ -125,6 +127,7 @@ class Job {
     {
         $this->retry = $retry;
     }
+
 
     /**
      * @return int
@@ -134,6 +137,7 @@ class Job {
         return $this->ttl;
     }
 
+
     /**
      * @param mixed $ttl
      */
@@ -142,6 +146,7 @@ class Job {
         $this->ttl = $ttl;
     }
 
+
     /**
      * @return string
      */
@@ -149,6 +154,7 @@ class Job {
     {
         return $this->queue;
     }
+
 
     /**
      * @param string $queue
@@ -160,9 +166,21 @@ class Job {
 
 
     /**
+     * Retrieve the originating node id.
+     *
+     * @return string|null The node id of the node where the job was published
+     */
+    public function getOriginNode()
+    {
+        return $this->id ? substr($this->id, 3, 11) : null;
+    }
+
+
+    /**
      * Job Factory method.
      *
      * @param array $args
+     *
      * @return Job
      */
     public static function create(array $args)
@@ -189,15 +207,6 @@ class Job {
         return $job;
     }
 
-    /**
-     * Retrieve the originating node id.
-     *
-     * @return string|null The node id of the node where the job was published
-     */
-    public function getOriginNode()
-    {
-        return $this->id ? substr($this->id, 2, 8) : null;
-    }
 
     public function __toString()
     {
