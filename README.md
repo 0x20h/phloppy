@@ -126,7 +126,7 @@ Commands:
 
 ## Streams
 
-### DefautStream
+### DefaultStream
 
 Connect to a single node. If the connection fails, a `ConnectException` thrown.
 If the node fails, a StreamException is thrown.
