@@ -16,7 +16,7 @@ class JobTest extends \PHPUnit_Framework_TestCase {
     public function testOriginNode()
     {
         $job = Job::create(['id' => 'D-dcb833cf-8YL1NT17e9+wsA/09NqxscQI-05a1', 'body' => '']);
-        $this->assertEquals('f53204d8bd1', $job->getOriginNode());
+        $this->assertEquals('dcb833cf', $job->getOriginNode());
 
         $job = Job::create(['body' => '']);
         $this->assertNull($job->getOriginNode());

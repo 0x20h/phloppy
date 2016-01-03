@@ -196,7 +196,7 @@ class Job {
      */
     public function getOriginNode()
     {
-        return $this->id ? substr($this->id, 3, 11) : null;
+        return $this->id ? substr($this->id, 2, 8) : null;
     }
 
     public function __toString()
