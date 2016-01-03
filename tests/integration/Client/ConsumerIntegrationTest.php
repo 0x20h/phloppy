@@ -19,7 +19,7 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
         $queue = 'test-'.substr(sha1(mt_rand()), 0, 6);
         $client= new Consumer($this->stream);
         // ack an unknown job
-        $job = Job::create(['id' => 'DI37a52bb8dc160e3953111b6a9a7b10f56209320d0002SQ', 'body' => 'foo']);
+        $job = Job::create(['id' => 'D-dcb833cf-8YL1NT17e9+wsA/09NqxscTI-05a1', 'body' => 'foo']);
         $this->assertEquals(0, $client->ack($job));
     }
 
@@ -56,7 +56,7 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
         $job      = $producer->addJob($queue, Job::create(['body' => __METHOD__]));
         $findJob  = $consumer->show($job->getId());
         $this->assertEquals($findJob->getBody(), $job->getBody());
-        $findJob  = $consumer->show('DIf7198058ffab72d8692e5ece37fb0cfeecabd940023cSQ');
+        $findJob  = $consumer->show('D-dcb833cf-8YL1NT17e9+wsA/09NqxscQI-00a1');
         $this->assertNull($findJob);
     }
 
@@ -79,7 +79,7 @@ class ConsumerIntegrationTest extends AbstractIntegrationTest {
         $producer = new Producer($this->stream);
 
         // unknown jobid
-        $this->assertEquals(0, $consumer->nack(['DIf0148058ffab72d8692e5ece37fb0cfeecabd940023cSQ']));
+        $this->assertEquals(0, $consumer->nack(['D-dcb833cf-8YL1NT17e9+wsA/09NqxscQI-0551']));
 
         $job = $producer->addJob($queue, Job::create(['body' => __METHOD__]));
         $jobConsumed = $consumer->getJob($queue);
