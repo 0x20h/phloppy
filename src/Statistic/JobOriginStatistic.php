@@ -6,12 +6,13 @@ use Phloppy\Exception;
 use Phloppy\Job;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
+/**
+ * Collect Statistics of jobs/sec by node.
+ */
 class JobOriginStatistic implements NodeStatistic
 {
-
-    const ALPHA = 0.9;
-
     /**
      * Node Ids
      *
@@ -29,12 +30,27 @@ class JobOriginStatistic implements NodeStatistic
      */
     private $log;
 
-    function __construct(LoggerInterface $log = null)
+    /**
+     * @var float
+     */
+    private $alpha;
+
+
+    /**
+     * @param float           $alpha Sensitivity factor.
+     * @param LoggerInterface $log
+     */
+    function __construct($alpha = 0.9, LoggerInterface $log = null)
     {
         if (!$log) {
             $log = new NullLogger();
         }
 
+        if ((float) $alpha < 0.5 || (float) $alpha > 1.0) {
+            throw new InvalidArgumentException('0.5 < $alpha < 1.0');
+        }
+
+        $this->alpha = (float) $alpha;
         $this->log = $log;
     }
 
@@ -73,10 +89,10 @@ class JobOriginStatistic implements NodeStatistic
         $this->lastReceived[$nodeId] = clone $receivedAt;
         // exp moving average from the last message to now (per sec)
         $this->stats[$nodeId] =
-            pow(self::ALPHA, $secs) * $this->stats[$nodeId] +
-            (1 - self::ALPHA);
+            pow($this->alpha, $secs) * $this->stats[$nodeId] +
+            (1 - $this->alpha);
 
-        $this->log->debug('updated value', ['id' => $nodeId, 'pow' => pow(self::ALPHA, $secs), 'value' => $this->stats[$nodeId], 'delta' => $secs]);
+        $this->log->debug('updated value', ['id' => $nodeId, 'pow' => pow($this->alpha, $secs), 'value' => $this->stats[$nodeId], 'delta' => $secs]);
         return $this->stats[$nodeId];
     }
 

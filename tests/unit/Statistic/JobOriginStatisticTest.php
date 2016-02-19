@@ -5,6 +5,7 @@ namespace Phloppy\Statistic;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,9 +15,38 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
      */
     private $log;
 
+
     protected function setUp()
     {
         $this->log = new Logger(new StreamHandler('php://stdout'));
+        $this->log = new NullLogger();
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTooSmallAlpha()
+    {
+        new JobOriginStatistic(.4);
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testTooLargeAlpha()
+    {
+        new JobOriginStatistic(1.2);
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidAlpha()
+    {
+        new JobOriginStatistic('foo');
     }
 
 
@@ -30,12 +60,12 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
             ->method('getOriginNode')
             ->willReturn('a');
 
-        $statistics = new JobOriginStatistic($this->log);
+        $statistics = new JobOriginStatistic(.8, $this->log);
 
         // lets assume that in 10 subsequent seconds one message is received per second
         $date = new \DateTime('now');
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $statistics->update($job, $date);
             $date = $date->add(new \DateInterval('PT1S'));
         }
@@ -61,7 +91,7 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
             ->method('getOriginNode')
             ->willReturn('b');
 
-        $statistics = new JobOriginStatistic($this->log);
+        $statistics = new JobOriginStatistic(.8, $this->log);
 
         // lets assume that in 10 subsequent seconds one message is received per second
         $dateA = new \DateTime('now');
