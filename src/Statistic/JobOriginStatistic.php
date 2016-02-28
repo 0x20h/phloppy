@@ -21,7 +21,8 @@ class JobOriginStatistic implements NodeStatistic
     private $lastReceived;
 
     /**
-     * @var float[]
+     * 2-dimensional array storing rates for (queue, nodeId) pairs
+     * @var string[]
      */
     private $stats;
 
@@ -67,32 +68,43 @@ class JobOriginStatistic implements NodeStatistic
     public function update(Job $job, \DateTime $receivedAt = null)
     {
         $nodeId = $job->getOriginNode();
+        $queue = $job->getQueue();
 
         if (!$receivedAt) {
             $receivedAt = new \DateTime('now');
         }
 
-        if (!isset($this->lastReceived[$nodeId])) {
-            $this->lastReceived[$nodeId] = clone $receivedAt;
+        if (!isset($this->lastReceived[$queue][$nodeId])) {
+            $this->lastReceived[$queue][$nodeId] = clone $receivedAt;
         }
 
-        if (!isset($this->stats[$nodeId])) {
-            $this->stats[$nodeId] = 0.;
+        if (!isset($this->stats[$queue])) {
+            $this->stats[$queue] = [];
         }
 
-        $secs = $receivedAt->diff($this->lastReceived[$nodeId])->s;
+        if (!isset($this->stats[$queue][$nodeId])) {
+            $this->stats[$queue][$nodeId] = 0.;
+        }
+
+        $secs = $receivedAt->diff($this->lastReceived[$queue][$nodeId])->s;
 
         if ($secs < 0) {
             $secs = 0;
         }
 
-        $this->lastReceived[$nodeId] = clone $receivedAt;
+        $this->lastReceived[$queue][$nodeId] = clone $receivedAt;
         // exp moving average from the last message to now (per sec)
-        $this->stats[$nodeId] =
-            pow($this->alpha, $secs) * $this->stats[$nodeId] +
+        $this->stats[$queue][$nodeId] =
+            pow($this->alpha, $secs) * $this->stats[$queue][$nodeId] +
             (1 - $this->alpha);
 
-        $this->log->debug('updated value', ['id' => $nodeId, 'pow' => pow($this->alpha, $secs), 'value' => $this->stats[$nodeId], 'delta' => $secs]);
+        $this->log->debug('updated value', [
+            'id' => $nodeId,
+            'queue' => $queue,
+            'value' => $this->stats[$nodeId],
+            'delta' => $secs
+        ]);
+
         return $this->stats[$nodeId];
     }
 
@@ -104,23 +116,25 @@ class JobOriginStatistic implements NodeStatistic
      *
      * @return float[]
      */
-    public function nodes()
+    public function nodes($queue)
     {
-        return $this->stats;
+        assert(arsort($this->stats[$queue]), true);
+        return $this->stats[$queue];
     }
 
 
     /**
-     * Return information on a specific node.
+     * Return information on a specific (queue, node).
      *
-     * If the node is not known, no messages have been retrieved from it, so 0. will be returned.
+     * If the queue and/or node is not known, no messages have been retrieved from it, so 0. will be returned.
      *
-     * @param $nodeId
+     * @param string $queue
+     * @param string $nodeId
      *
-     * @return float
+     * @return float msg rate (per sec)
      */
-    public function node($nodeId)
+    public function node($queue, $nodeId)
     {
-        return isset($this->stats[$nodeId]) ? $this->stats[$nodeId] : 0.;
+        return isset($this->stats[$queue][$nodeId]) ? $this->stats[$queue][$nodeId] : 0.;
     }
 }

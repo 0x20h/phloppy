@@ -20,13 +20,14 @@ interface NodeStatistic
 
 
     /**
-     * Return an ordered list of nodes.
+     * Return an ordered list of nodes for the given queue.
      *
-     * The list is ordered descending by the frequency of Jobs.
+     * The list is ordered descending by the frequency of Jobs received from the
+     * respective node.
      *
-     * @return float[]
+     * @return string[]
      */
-    public function nodes();
+    public function nodes($queue);
 
 
     /**
@@ -38,5 +39,5 @@ interface NodeStatistic
      *
      * @return float
      */
-    public function node($nodeId);
+    public function node($nodeId, $queue);
 }

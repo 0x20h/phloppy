@@ -18,7 +18,8 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->log = new Logger(new StreamHandler('php://stdout'));
+        // here for you, debugging
+        //$this->log = new Logger(new StreamHandler('php://stdout'));
         $this->log = new NullLogger();
     }
 
@@ -56,9 +57,8 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
             ->setConstructorArgs(['body'])
             ->getMock();
 
-        $job->expects($this->any())
-            ->method('getOriginNode')
-            ->willReturn('a');
+        $job->expects($this->any())->method('getOriginNode')->willReturn('a');
+        $job->expects($this->any())->method('getQueue')->willReturn('aQueue');
 
         $statistics = new JobOriginStatistic(.8, $this->log);
 
@@ -71,7 +71,7 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
         }
 
         // Statistics should be around 1. (per sec)
-        $this->assertLessThan(.001, 1 - $statistics->node('a'));
+        $this->assertLessThan(.001, 1 - $statistics->node('aQueue', 'a'));
     }
 
 
@@ -83,13 +83,11 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
 
         $jobB = clone $jobA;
 
-        $jobA->expects($this->any())
-            ->method('getOriginNode')
-            ->willReturn('a');
+        $jobA->expects($this->any())->method('getOriginNode')->willReturn('a');
+        $jobA->expects($this->any())->method('getQueue')->willReturn('aQueue');
 
-        $jobB->expects($this->any())
-            ->method('getOriginNode')
-            ->willReturn('b');
+        $jobB->expects($this->any())->method('getOriginNode')->willReturn('b');
+        $jobB->expects($this->any())->method('getQueue')->willReturn('aQueue');
 
         $statistics = new JobOriginStatistic(.8, $this->log);
 
@@ -98,16 +96,15 @@ class JobOriginStatisticTest extends \PHPUnit_Framework_TestCase
         // lets assume that in 20 subsequent seconds one message is received every second second
         $dateB = new \DateTime('now');
 
-        for ($i = 0; $i < 200; $i++) {
+        for ($i = 0; $i < 45; $i++) {
             $statistics->update($jobA, $dateA);
             $statistics->update($jobB, $dateB);
-            $dateA = $dateA->add(new \DateInterval('PT1S'));
-            $dateB = $dateB->add(new \DateInterval('PT2S'));
+            $dateA = $dateA->add(new \DateInterval('PT2S'));
+            $dateB = $dateB->add(new \DateInterval('PT1S'));
         }
 
-        // Statistics should be around 1. (per sec)
-        $this->assertLessThan(.001, 1. - $statistics->node('a'));
-        // Statistics should be around .5 (per sec)
-        $this->assertLessThan(.001, .5 - $statistics->node('b'));
+        $nodes = $statistics->nodes('aQueue');
+        $expected = array('b', 'a');
+        $this->assertEquals($expected, array_keys($nodes));
     }
 }
