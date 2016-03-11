@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jan.kohlhof
- * Date: 22.02.16
- * Time: 00:52
- */
 
 namespace Phloppy\Subscriber;
 
