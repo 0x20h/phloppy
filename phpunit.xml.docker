@@ -20,7 +20,7 @@
 		  </testsuite>
 	 </testsuites>
 	 <php>
-		<env name="DISQUE_SERVERS" value="tcp://127.0.0.1:7711" />
+		<env name="DISQUE_SERVERS" value="tcp://disque_1:7711,tcp://disque_2:7711,tcp://disque_3:7711" />
 		<env name="LOGFILE" value="./logs/tests.log" />
 	 </php>
 </phpunit>
