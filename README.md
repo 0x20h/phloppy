@@ -155,6 +155,15 @@ $cache = new FileCache('/tmp/nodes');
 $stream = new CachedPool(['tcp://127.0.0.1:7711'], $cache);
 ```
 
+## Testing
+
+You can run the tests in docker `>1.10.0` using docker-compose.
+
+```
+# assuming you have setup composer dependencies, e.g.
+# docker run -v $PWD:/p -w /p php:7 ./composer.phar install
+docker-compose run vendor/bin/phpunit -c phpunit.xml.dist
+```
 
 # License
 

@@ -2,6 +2,7 @@
 /logs
 /composer.lock
 /phpunit.xml
+/composer.phar
 /.idea
 /vimrc
 /tags

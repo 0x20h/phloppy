@@ -1,14 +1,16 @@
 <?php
 namespace Phloppy\Client;
 
+use Phloppy\Exception\CommandException;
 use Phloppy\Job;
 use Phloppy\RespUtils;
-use Phloppy\Stream\StreamInterface;
 use Phloppy\Stream\StreamException;
+use Phloppy\Stream\StreamInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-
-use Phloppy\Exception\CommandException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 
 /**
  * Abstract Disque Client.
@@ -26,17 +28,40 @@ abstract class AbstractClient {
     protected $log;
 
     /**
-     * @param StreamInterface $stream
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+
+    /**
+     * @param StreamInterface      $stream
      * @param LoggerInterface|null $log Logger instance.
      */
-    public function __construct(StreamInterface $stream, LoggerInterface $log = null)
-    {
+    public function __construct(
+        StreamInterface $stream,
+        LoggerInterface $log = null,
+        EventDispatcherInterface $dispatcher = null
+    ) {
         if (!$log) {
             $log = new NullLogger();
         }
 
-        $this->log    = $log;
+        if (!$dispatcher) {
+            $dispatcher = new EventDispatcher();
+        }
+
+        $this->log = $log;
         $this->stream = $stream;
+        $this->dispatcher = $dispatcher;
+    }
+
+
+    /**
+     * @return EventDispatcherInterface
+     */
+    public function getDispatcher()
+    {
+        return new $this->dispatcher;
     }
 
 
@@ -44,6 +69,7 @@ abstract class AbstractClient {
      * Send request and retrieve response to the connected disque node.
      *
      * @param array $args
+     *
      * @return array|int|null|string
      *
      * @throws CommandException
@@ -54,6 +80,7 @@ abstract class AbstractClient {
         $this->log->debug('send()ing command', $args);
         $response = RespUtils::deserialize($this->stream->write(RespUtils::serialize($args)));
         $this->log->debug('response', [$response]);
+
         return $response;
     }
 
@@ -62,15 +89,19 @@ abstract class AbstractClient {
      * Map Disque's job responses to Job objects.
      *
      * @param array $list Job response array from the disque server.
+     *
      * @return Job[]
      */
-    protected function mapJobs(array $list) {
+    protected function mapJobs(array $list)
+    {
         return array_map(
-            function($element) { return Job::create([
-                'queue' => $element[0],
-                'id'    => $element[1],
-                'body'  => isset($element[2]) ? $element[2] : '',
-            ]); },
+            function ($element) {
+                return Job::create([
+                    'queue' => $element[0],
+                    'id' => $element[1],
+                    'body' => isset($element[2]) ? $element[2] : '',
+                ]);
+            },
             $list
         );
     }

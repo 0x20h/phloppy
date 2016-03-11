@@ -1,0 +1,13 @@
+version: "2"
+services:
+    cli:
+        image: php:7
+        volumes:
+            - .:/p
+        working_dir: /p
+        links:
+            - disque
+        depends_on:
+            - disque
+    disque:
+        image: 0x20h/disque
