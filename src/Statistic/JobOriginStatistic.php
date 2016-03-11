@@ -101,11 +101,11 @@ class JobOriginStatistic implements NodeStatistic
         $this->log->debug('updated value', [
             'id' => $nodeId,
             'queue' => $queue,
-            'value' => $this->stats[$nodeId],
+            'value' => $this->stats[$queue][$nodeId],
             'delta' => $secs
         ]);
 
-        return $this->stats[$nodeId];
+        return $this->stats[$queue][$nodeId];
     }
 
 
