@@ -1,6 +1,8 @@
 <?php
 namespace Phloppy\Client;
 
+use Phloppy\Event\GetJobsEvent;
+use Phloppy\Event\JobsReceivedEvent;
 use Phloppy\Exception\CommandException;
 use Phloppy\Job;
 use Phloppy\RespUtils;
@@ -18,7 +20,9 @@ class Consumer extends AbstractClient {
      */
     public function getJobs($queues, $count = 1, $timeoutMs = 200)
     {
-        return $this->mapJobs((array) $this->send(array_merge(
+
+        $this->getDispatcher()->dispatch(GetJobsEvent::ID, new GetJobsEvent((array) $queues, $count, $timeoutMs));
+        $jobs = $this->mapJobs((array) $this->send(array_merge(
             [
                 'GETJOB',
                 'TIMEOUT',
@@ -29,6 +33,9 @@ class Consumer extends AbstractClient {
             ],
             (array) $queues
         )));
+
+        $this->getDispatcher()->dispatch(JobsReceivedEvent::ID, new JobsReceivedEvent((array) $queues, $jobs));
+        return $jobs;
     }
 
 
